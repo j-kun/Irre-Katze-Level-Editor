@@ -1,0 +1,28 @@
+# It is not possible to use relative paths in desktop files
+# therefore it is platform dependent and can not be shared.
+# Instead I am providing create_desktop_file.sh to create it.
+irka-editor.desktop
+
+
+# ===== Windows =====
+# thumbnails
+Thumbs.db
+# shortcuts
+*.lnk
+
+# ===== Linux =====
+.fuse_hidden*
+#vim
+*.swp
+#gedit
+*~
+#Libre Office
+.~lock.*
+
+# ===== Mac OS =====
+.DS_Store
+
+
+# ===== Python =====
+*.pyc
+

@@ -1,0 +1,75 @@
+filename: "irka-%3d.afg"
+
+line 1:
+	header which seems to be the same in all files
+
+lines 2--11:
+	field.
+	18x10 characters.
+	each character is one cell, ascii encoded. 
+	corresponding image is "irka%d.bmp".
+	'!' is an empty cell.
+	'0' is start door.
+	'[' is end door.
+
+line 12:
+	name of author
+
+line 13: margin
+line 14: untouched fields
+line 15: touched fields
+
+line 16:
+	number of steps in solution. (n)
+
+lines 17--17+2*n-1:
+	solution.
+	odd line : x coordinate
+	even line: y coordinate
+	left  top corner   :  1,  2
+	right top corner   : 18,  2
+	left  bottom corner:  1, 11
+	right bottom corner: 18, 11
+	first field is first field where the cat moves to (not the start field where it stands when the level is loaded)
+	after pipe following y coordinates must be flipped.
+	
+	jumps can occur at:
+		- pipe
+			dx = 0
+			dy = yAfterPipe - yBeforePipe with yAfterPipe = ROWS - 1 - yBeforePipe => dy = ROWS - 1 - 2*yBeforePipe
+			=> jump and step are unambiguously separable
+		- helium
+			dx = 0
+			dy < 0 # helium always moves upwards
+			can not step downward, because there is the helium
+			=> jump and step are unambiguously separable
+	
+	in most cases a jump is unambiguous, because:
+		- you can't smoke a pipe if there is no pipe
+		- helium can't push you upwards if there is no helium
+		- jump can't be caused by pipe if dy does not match the calculation above
+		- jump can't be caused by helium if dy >= 0 (cause helium always moves upwards)
+		- helium only moves upward, not sideways => it can't be a helium jump if there is no helium below you
+		  (this reasoning does not work for the pipe because it's subject to gravity and can slide to a neighbouring column)
+	
+	complications:
+		- a combination is possible (first pipe jump and immediately afterwards a helium jump)
+		- usually a helium jump can only occur if the entered field was untouched.
+		  however scenarios are possible (I think) where 
+		  (1) I visit a field A 
+		  (2) something falls or is moved onto field A 
+		  (3) I visit the field below A 
+		  (4) when I leave the field below A the helium will float up 
+		  (5) I visit field A, moving the object aside 
+		  => a helium jump may happen although I have visited the field already.
+		- a helium jump is possible even if I have not visited the fields above because they may have been activated by falling objects
+	
+	solution:
+		- lines after the specified number of solution steps are ignored. I can use these to save the performed steps (rather than the coordinates).
+	
+	no jump at arrow (arrows are counted as two steps)
+		(this is done wrong in the solution of irka-019.afg)
+
+line 17+2*n:
+	last line.
+	empty.
