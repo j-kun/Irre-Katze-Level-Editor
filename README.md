@@ -45,8 +45,13 @@ $ mv irka-editor.desktop ~/.local/share/applications/
 
 ### Windows
 
-Create a shortcut and insert as Target: `pythonw py/gui_main.py`.
-(If `pythonw.exe` is not in one of the directories specified by the `%PATH%` variable you need to specify the comlete path like for example `C:\Python27\pythonw.exe`. If the shortcut is located somewhere else than in the root directory of the repository the path to the file must be changed accordingly. If a path contains spaces it must be enclosed in double quotes.)
+Create a new shortcut:
+- *Target*: `pythonw py/gui_main.py`
+- *Start in*: the root directory of the repository (may be empty if the shortcut is located in that directory)
+
+If a path contains spaces it must be enclosed in double quotes.
+
+If `pythonw.exe` is not in one of the directories specified by the `%PATH%` variable you need to specify the comlete path like for example `C:\Python27\pythonw.exe`.
 
 
 ## License
