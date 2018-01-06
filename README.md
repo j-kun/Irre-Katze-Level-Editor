@@ -2,7 +2,7 @@
 
 This is an editor to create custom levels for the game "Irre Katze".
 
-In order to play the levels you need the original game which is available for free at https://www.j-ws.de/index_lidos_modul_02.php?content_id=1.
+In order to play the levels you need the original game which is available for free at https://www.j-ws.de/index_lidos_modul_02.php?content_id=1&such=irre-katze.
 
 
 ## About the game
@@ -13,7 +13,7 @@ Throughout the game you need to figure out the physics of the world (like when a
 
 As far as I know the game is available in German only but that should not be a problem because it does not really involve any text.
 
-The game is available for free at the above mentioned [link](https://www.j-ws.de/index_lidos_modul_02.php?content_id=1).
+The game is available for free at the above mentioned [link](https://www.j-ws.de/index_lidos_modul_02.php?content_id=1&such=irre-katze).
 
 Just download it, unpack it and explore the world!
 
