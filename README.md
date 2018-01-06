@@ -3,6 +3,7 @@
 This is an editor to create custom levels for the game "Irre Katze".
 
 In order to play the levels you need the original game which is available for free at https://www.j-ws.de/index_lidos_modul_02.php?content_id=1&such=irre-katze.
+The link there is not very obvious. If you have trouble finding it search for the keyword "Download" with `Control+f`.
 
 
 ## About the game
@@ -71,6 +72,10 @@ Create a new shortcut:
 If a path contains spaces it must be enclosed in double quotes.
 
 If `pythonw.exe` is not in one of the directories specified by the `%PATH%` variable you need to specify the comlete path like for example `C:\Python27\pythonw.exe`.
+
+
+## Documentation
+A manual how to use this level editor is available in the [Wiki](https://github.com/j-kun/Irre-Katze-Level-Editor/wiki#using-the-level-editor).
 
 
 ## License
