@@ -33,10 +33,10 @@ import os.path
 
 # other libraries
 try:
-    import tk_tooltip
+    import BalloonTip as tk_tooltip
 except:
-    import tk_tooltip_fake as tk_tooltip
-    log.warning("did not find tk_tooltip library. tooltips are not displayed.")
+    import BalloonTip_fake as tk_tooltip
+    log.warning("did not find BallonTip.py. tooltips are not displayed.")
 ImageTk = tk
 import tkinter_constants as tkc
 import locales
@@ -70,8 +70,12 @@ def set_text(widget, text):
         widget.set(text)
     elif isinstance(widget, tk.Label):
         widget[tkc.TEXT] = text
-    elif isinstance(widget, tk_tooltip.ToolTip):
-        widget[tkc.TEXT] = text
+    elif isinstance(widget, tk_tooltip.BalloonTip):
+        if text == "" or text == None:
+            state = tkc.STATE_DISABLED
+        else:
+            state = tkc.STATE_NORMAL
+        widget.configure(text = text, state = state)
     else:
         log.error("set_text is not implemented for {0}".format(type(widget)))
         raise NotImplemented
@@ -88,15 +92,13 @@ def get_text(widget):
         return widget.get()
     elif isinstance(widget, tk.Label):
         return widget[tkc.TEXT]
-    elif isinstance(widget, tk_tooltip.ToolTip):
-        return widget[tkc.TEXT]
     else:
         raise NotImplemented
 
 
 def add_tooltip(widget):
     #TODO: delay as setting
-    widget.tooltip = tk_tooltip.ToolTip(widget, delay=500)
+    widget.tooltip = tk_tooltip.BalloonTip(widget, delay=500)
 
 
 def is_open_window(window):

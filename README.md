@@ -24,9 +24,28 @@ You don't really need to install this program.
 You need python to run it.
 Just execute `py/gui_main.py` and you can start to create a new level.
 
-If you don't have Python you can download it from https://www.python.org/downloads/.
+However, you may want to create a link to start the level editor more easily. This is described in the platform specific subsections below.
 
-However, you may want to create a link to start the level editor more easily. This is described in the following subsections.
+If you don't have Python you can download it from https://www.python.org/downloads/.
+This software has been tested with Python 2.7.9 and Python 3.4.2.
+
+### Tool tips
+In order to have tool tips download [BalloonTip.py](https://github.com/emcek/pyton/blob/master/BalloonTip.py) and move it into the subdirectory `py`.
+
+In order to make it Python 3 compatible replace this line:
+```
+from Tkinter import Button, Toplevel, Label, Listbox, Tk
+```
+with these:
+```
+try:
+    # Python 2
+    from Tkinter import Button, Toplevel, Label, Listbox, Tk
+except:
+    # Python 3
+    from tkinter import Button, Toplevel, Label, Listbox, Tk
+```
+
 
 ### Linux (Debian & Gnome 3)
 
