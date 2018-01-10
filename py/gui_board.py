@@ -61,6 +61,8 @@ class Board(tk.Canvas):
         )
         self.model = model
         self._mode = self.MODE_EDIT_LEVEL
+        self._last_cmd = None
+        
         self.canvas = self
         self.canvas.bindToKey = tkx.KeyBinder(self.canvas)
         self.widgetToFocus = self
@@ -129,6 +131,8 @@ class Board(tk.Canvas):
 
         self.canvas.bind('<Control-z>' ,  lambda e: self.model.undo())
         self.canvas.bind('<Control-Z>' ,  lambda e: self.model.redo())
+        
+        self.canvas.bind('<Control-r>' ,  lambda e: self.repeatLastCommand())
 
         #TODO: +/- to change last inserted object
         #TODO: invert/mirror?
@@ -246,6 +250,11 @@ class Board(tk.Canvas):
             self.onChangeListener(self.model.CHANGE_BOARD)
         return tkc.RETURNCODE_BREAK
 
+    def repeatLastCommand(self):
+        if self._last_cmd == None:
+            return
+        self.evaluateCommand(self._last_cmd)
+
 
     # ---------- enter object code ----------
 
@@ -289,15 +298,21 @@ class Board(tk.Canvas):
     
     def enterNewObjectDone(self, event=None):
         code = tkx.get_text(self.entry)
+        if self.evaluateCommand(code):
+            self.enterNewObjectSuccess()
+            return True
+        else:
+            self.enterNewObjectError()
+            return False
+
+    def evaluateCommand(self, code):
         if len(code)==1:
             value = ord(code)
         elif code == self.CODE_ENTER_AUTHOR:
-            self.enterNewObjectSuccess()
             self.enterAuthor()
             return True
         elif code[:len(self.CODE_SET_AUTHOR)] == self.CODE_SET_AUTHOR:
             self.model.setAuthor(code[len(self.CODE_SET_AUTHOR):].strip())
-            self.enterNewObjectSuccess()
             return True
         elif code[:len(self.CODE_SET_BG)] == self.CODE_SET_BG:
             bg = code[len(self.CODE_SET_BG):].strip()
@@ -310,21 +325,17 @@ class Board(tk.Canvas):
                     value = backgrounds.pattern_fn.format(fld=3, scheme=bg)
                     if value in backgrounds.CATEGORY_TOUCHED:
                         self.model.setBgTouched(value)
-                        self.enterNewObjectSuccess()
                         return True
-            self.enterNewObjectError()
             return False
         elif code == self.CODE_BG_INC:
             self.model.setBgBorder(    backgrounds.nextBg( self.model.getBgBorder()    ))
             self.model.setBgUntouched( backgrounds.nextBg( self.model.getBgUntouched() ))
             self.model.setBgTouched(   backgrounds.nextBg( self.model.getBgTouched()   ))
-            self.enterNewObjectSuccess()
             return True
         elif code == self.CODE_BG_DEC:
             self.model.setBgBorder(    backgrounds.prevBg( self.model.getBgBorder()    ))
             self.model.setBgUntouched( backgrounds.prevBg( self.model.getBgUntouched() ))
             self.model.setBgTouched(   backgrounds.prevBg( self.model.getBgTouched()   ))
-            self.enterNewObjectSuccess()
             return True
         else:
             try:
@@ -338,26 +349,21 @@ class Board(tk.Canvas):
                 elif value in backgrounds.CATEGORY_TOUCHED:
                     self.model.setBgTouched(value)
                 else:
-                    self.enterNewObjectError()
                     return False
-                self.enterNewObjectSuccess()
                 return True
 
         if self.isModeEditSolution():
-            self.enterNewObjectError()
             return False
         if not self.model.hasCursor():
-            self.enterNewObjectError()
             return False
         if imageOpener.getImage.isValid(value):
             self.model.setFieldAtCursor(value)
         else:
-            self.enterNewObjectError()
             return False
-        self.enterNewObjectSuccess()
         return True
 
     def enterNewObjectSuccess(self):
+        self._last_cmd = tkx.get_text(self.entry)
         self.enterNewObjectCancel()
 
     def enterNewObjectError(self):
