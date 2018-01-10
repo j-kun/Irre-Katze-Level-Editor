@@ -284,6 +284,8 @@ class Board(tk.Canvas):
     CODE_ENTER_AUTHOR = "author"
     CODE_SET_AUTHOR   = CODE_ENTER_AUTHOR + "="
     CODE_SET_BG       = "bg="
+    CODE_BG_INC       = "bg++"
+    CODE_BG_DEC       = "bg--"
     
     def enterNewObjectDone(self, event=None):
         code = tkx.get_text(self.entry)
@@ -299,19 +301,31 @@ class Board(tk.Canvas):
             return True
         elif code[:len(self.CODE_SET_BG)] == self.CODE_SET_BG:
             bg = code[len(self.CODE_SET_BG):].strip()
-            value = 'irka3_1%s.fld' % bg
+            value = backgrounds.pattern_fn.format(fld=1, scheme=bg)
             if value in backgrounds.CATEGORY_BORDER:
                 self.model.setBgBorder(value)
-                value = 'irka3_2%s.fld' % bg
+                value = backgrounds.pattern_fn.format(fld=2, scheme=bg)
                 if value in backgrounds.CATEGORY_UNTOUCHED:
                     self.model.setBgUntouched(value)
-                    value = 'irka3_3%s.fld' % bg
+                    value = backgrounds.pattern_fn.format(fld=3, scheme=bg)
                     if value in backgrounds.CATEGORY_TOUCHED:
                         self.model.setBgTouched(value)
                         self.enterNewObjectSuccess()
                         return True
             self.enterNewObjectError()
             return False
+        elif code == self.CODE_BG_INC:
+            self.model.setBgBorder(    backgrounds.nextBg( self.model.getBgBorder()    ))
+            self.model.setBgUntouched( backgrounds.nextBg( self.model.getBgUntouched() ))
+            self.model.setBgTouched(   backgrounds.nextBg( self.model.getBgTouched()   ))
+            self.enterNewObjectSuccess()
+            return True
+        elif code == self.CODE_BG_DEC:
+            self.model.setBgBorder(    backgrounds.prevBg( self.model.getBgBorder()    ))
+            self.model.setBgUntouched( backgrounds.prevBg( self.model.getBgUntouched() ))
+            self.model.setBgTouched(   backgrounds.prevBg( self.model.getBgTouched()   ))
+            self.enterNewObjectSuccess()
+            return True
         else:
             try:
                 value = int(code)
