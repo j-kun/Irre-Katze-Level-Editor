@@ -181,12 +181,18 @@ class Board(tk.Canvas):
 
     def onChangeListener(self, change):
         model = self.model
-        if change == model.CHANGE_CURSOR:
-            self.canvas.delete(self.TAG_CURSOR)
-            self.drawCursor()
-        elif change == model.CHANGE_BG_BORDER:
+        done = False
+        if change in (model.CHANGE_BG_BORDER, model.CHANGE_BG):
             self.canvas.delete(self.TAG_BORDER)
             self.drawBorder()
+            if change == model.CHANGE_BG_BORDER:
+                done = True
+
+        if done:
+            pass
+        elif change == model.CHANGE_CURSOR:
+            self.canvas.delete(self.TAG_CURSOR)
+            self.drawCursor()
         elif change == model.CHANGE_ALL:
             self.canvas.delete(tk.ALL)
             self.drawBorder()

@@ -888,6 +888,7 @@ class Model(object):
     CHANGE_BG_TOUCHED   = "touched"
     CHANGE_BG_UNTOUCHED = "untouched"
     CHANGE_BG_BORDER    = "border"
+    CHANGE_BG           = "backgrounds.all"
     CHANGE_AUTHOR       = "author"
     CHANGE_HAS_CHANGED  = "has-changed"
     CHANGE_ALL          = "*"
@@ -1230,14 +1231,20 @@ class Model(object):
     prevBgTouched   = lambda self:  self.setBgTouched(   self.__nextElement(backgrounds.CATEGORY_TOUCHED,   self.getBgTouched(),   -1) )
     
     def nextBg(self):
+        self.disableNotifications()
         self.nextBgBorder()
         self.nextBgUntouched()
         self.nextBgTouched()
+        self.enableNotifications()
+        self.onChange(self.CHANGE_BG)
     
     def prevBg(self):
+        self.disableNotifications()
         self.prevBgBorder()
         self.prevBgUntouched()
         self.prevBgTouched()
+        self.enableNotifications()
+        self.onChange(self.CHANGE_BG)
 
 
     # ---------- cursor ----------
