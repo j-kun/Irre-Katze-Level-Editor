@@ -5,7 +5,6 @@ import os.path
 import logging
 import locales
 _ = locales._
-import re
 
 from gui_image_opener import toAbsPath, getBackground
 
@@ -19,14 +18,7 @@ CATEGORY_BORDER  = list()
 CATEGORY_TOUCHED = list()
 CATEGORY_UNTOUCHED = list()
 
-__backgrounds = None
 def getBackgrounds():
-    global __backgrounds
-    if __backgrounds == None:
-        __backgrounds = tuple(__getBackgrounds())
-    return __backgrounds
-
-def __getBackgrounds():
     l = os.listdir(PATH_BACKGROUNDS)
     for fn in l:
         if fn[0] == '.':
@@ -55,33 +47,6 @@ categories = (
     (TITLE_UNTOUCHED, CATEGORY_UNTOUCHED),
     (TITLE_TOUCHED, CATEGORY_TOUCHED),
 )
-
-
-# next/previous background
-reo_fn     = re.compile('irka3_(?P<fld>1|2|3)(?P<scheme>[a-zA-Z]).fld')
-pattern_fn = 'irka3_{fld}{scheme}.fld'
-
-def __next_bg(bg, inc):
-    m = reo_fn.match(bg)
-    if m == None:
-        print("failed to parse %s" % bg)
-        return bg
-    fld = m.group('fld')
-    scheme = m.group('scheme')
-    scheme = ord(scheme)
-    scheme += inc
-    scheme = chr(scheme)
-    value = pattern_fn.format(fld=fld, scheme=scheme)
-    if value not in getBackgrounds():
-        scheme = 'a'
-        value = pattern_fn.format(fld=fld, scheme=scheme)
-    return value
-
-def nextBg(bg):
-    return __next_bg(bg, +1)
-
-def prevBg(bg):
-    return __next_bg(bg, -1)
 
 if __name__=='__main__':
     print(CATEGORY_ALL)

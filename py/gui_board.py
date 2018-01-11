@@ -328,14 +328,10 @@ class Board(tk.Canvas):
                         return True
             return False
         elif code == self.CODE_BG_INC:
-            self.model.setBgBorder(    backgrounds.nextBg( self.model.getBgBorder()    ))
-            self.model.setBgUntouched( backgrounds.nextBg( self.model.getBgUntouched() ))
-            self.model.setBgTouched(   backgrounds.nextBg( self.model.getBgTouched()   ))
+            self.model.nextBg()
             return True
         elif code == self.CODE_BG_DEC:
-            self.model.setBgBorder(    backgrounds.prevBg( self.model.getBgBorder()    ))
-            self.model.setBgUntouched( backgrounds.prevBg( self.model.getBgUntouched() ))
-            self.model.setBgTouched(   backgrounds.prevBg( self.model.getBgTouched()   ))
+            self.model.prevBg()
             return True
         else:
             try:

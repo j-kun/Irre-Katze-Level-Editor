@@ -14,6 +14,7 @@ from io import open
 
 # other libraries
 import model_history
+import model_background_catalog as backgrounds
 
 import model_object_catalog as objects
 import gui_image_opener as imageOpener
@@ -1214,6 +1215,29 @@ class Model(object):
             self.setField(*self.cursors[index[i]], value=toBeMoved)
         self.enableNotifications()
         self.onChange(self.CHANGE_BOARD)
+
+
+    # ---------- cursor ----------
+
+    __nextElement = staticmethod( lambda l, e, inc:  l[(l.index(e) + inc) % len(l)] )
+    
+    nextBgBorder    = lambda self:  self.setBgBorder(    self.__nextElement(backgrounds.CATEGORY_BORDER,    self.getBgBorder(),    +1) )
+    nextBgUntouched = lambda self:  self.setBgUntouched( self.__nextElement(backgrounds.CATEGORY_UNTOUCHED, self.getBgUntouched(), +1) )
+    nextBgTouched   = lambda self:  self.setBgTouched(   self.__nextElement(backgrounds.CATEGORY_TOUCHED,   self.getBgTouched(),   +1) )
+    
+    prevBgBorder    = lambda self:  self.setBgBorder(    self.__nextElement(backgrounds.CATEGORY_BORDER,    self.getBgBorder(),    -1) )
+    prevBgUntouched = lambda self:  self.setBgUntouched( self.__nextElement(backgrounds.CATEGORY_UNTOUCHED, self.getBgUntouched(), -1) )
+    prevBgTouched   = lambda self:  self.setBgTouched(   self.__nextElement(backgrounds.CATEGORY_TOUCHED,   self.getBgTouched(),   -1) )
+    
+    def nextBg(self):
+        self.nextBgBorder()
+        self.nextBgUntouched()
+        self.nextBgTouched()
+    
+    def prevBg(self):
+        self.prevBgBorder()
+        self.prevBgUntouched()
+        self.prevBgTouched()
 
 
     # ---------- cursor ----------
