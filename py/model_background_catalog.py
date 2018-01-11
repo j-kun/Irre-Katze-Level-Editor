@@ -9,6 +9,7 @@ _ = locales._
 from gui_image_opener import toAbsPath, getBackground
 
 PATH_BACKGROUNDS = toAbsPath('backgrounds/gif')
+pattern_fn = 'irka3_{fld}{scheme}.fld'
 
 TITLE_BORDER  = _("BG Border")
 TITLE_TOUCHED = _("BG Touched")
