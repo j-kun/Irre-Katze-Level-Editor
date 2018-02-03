@@ -450,11 +450,11 @@ class MainWindow(tk.Tk):
 
 
     def onClickAnywhere(self, event):
-        if self.board.isModeEditSolution():
-            self.solutionFrame.focus_set()
-        else:
-            if self.notesActive:
+        if self.notesActive:
                 self.textNotes.focus_set()
+        else:
+            if self.board.isModeEditSolution():
+                self.solutionFrame.focus_set()
             else:
                 self.board.focus_set()
     
