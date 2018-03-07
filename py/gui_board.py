@@ -129,9 +129,6 @@ class Board(tk.Canvas):
         self.canvas.bind('<Control-v>' ,  lambda e: self.model.paste(False))
         self.canvas.bind('<Control-x>' ,  lambda e: self.model.cut())
 
-        self.canvas.bind('<Control-z>' ,  lambda e: self.model.undo())
-        self.canvas.bind('<Control-Z>' ,  lambda e: self.model.redo())
-        
         self.canvas.bind('<Control-r>' ,  lambda e: self.repeatLastCommand())
 
         #TODO: +/- to change last inserted object

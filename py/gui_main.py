@@ -179,7 +179,10 @@ class MainWindow(tk.Tk):
         m.add_named_command('saveCopyAs', label=_("Save Copy As..."), command=self.saveCopyAs, event='<Control-S>')
 
         m = self.menubar.add_named_cascade('edit', label=_("Edit"), underline=0)
+        m.add_named_command('undo', label=_("Undo"), command=self.model.undo, event='<Control-z>')
+        m.add_named_command('redo', label=_("Redo"), command=self.model.redo, event='<Control-Z>')
         m.add_named_command('mode', event='<F11>')
+        m.add_separator()
         m.add_named_checkbutton('autoReloadLog', variable=self.sideFrame.varAutoReload, statevariable=self.sideFrame.varState, label=_("Auto Reload Log"), event='<Control-u>')
         m.add_named_command('settings', label=_("Settings"), command=self.openSettings)
 
