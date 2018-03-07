@@ -49,6 +49,9 @@ class KEY:
     ASK_BEFORE_SAVE      = 'ask-before-save'
     ASK_BEFORE_SAVE_AS   = 'ask-before-save-as'
     ASK_BEFORE_SAVE_COPY = 'ask-before-save-copy'
+    CHECK_AFTER_SAVE      = 'check-after-save'
+    CHECK_AFTER_SAVE_AS   = 'check-after-save-as'
+    CHECK_AFTER_SAVE_COPY = 'check-after-save-copy'
 
     WIDTH_NOTES = 'width-notes'
     WIDTH_LABEL_INFO = 'width-selection-info'
@@ -218,6 +221,9 @@ class MainWindow(tk.Tk):
         settings.setdefault(KEY.ASK_BEFORE_SAVE,      True)
         settings.setdefault(KEY.ASK_BEFORE_SAVE_AS,   True)
         settings.setdefault(KEY.ASK_BEFORE_SAVE_COPY, True)
+        settings.setdefault(KEY.CHECK_AFTER_SAVE,      True)
+        settings.setdefault(KEY.CHECK_AFTER_SAVE_AS,   True)
+        settings.setdefault(KEY.CHECK_AFTER_SAVE_COPY, True)
 
         settings.setdefault(KEY.VIEW_MOVABILITY_INDICATORS, False)
         settings.setdefault(KEY.AUTO_TRIGGER_SANITY_CHECK, True)
@@ -568,17 +574,35 @@ class MainWindow(tk.Tk):
     def save(self):
         if settings[KEY.ASK_BEFORE_SAVE] and not self.sanityCheckBeforeSave():
             return False
-        return self.saveWithoutCheck()
+
+        out = self.saveWithoutCheck()
+
+        if not settings[KEY.ASK_BEFORE_SAVE] and settings[KEY.CHECK_AFTER_SAVE]:
+            self.sanityCheckAfterSave()
+
+        return out
 
     def saveAs(self):
         if settings[KEY.ASK_BEFORE_SAVE_AS] and not self.sanityCheckBeforeSave():
             return False
-        return self.saveAsWithoutCheck()
+
+        out = self.saveAsWithoutCheck()
+
+        if not settings[KEY.ASK_BEFORE_SAVE_AS] and settings[KEY.CHECK_AFTER_SAVE_AS]:
+            self.sanityCheckAfterSave()
+
+        return out
 
     def saveCopyAs(self):
         if settings[KEY.ASK_BEFORE_SAVE_COPY] and not self.sanityCheckBeforeSave():
             return False
-        return self.saveCopyAsWithoutCheck()
+
+        out = self.saveCopyAsWithoutCheck()
+
+        if not settings[KEY.ASK_BEFORE_SAVE_COPY] and settings[KEY.CHECK_AFTER_SAVE_COPY]:
+            self.sanityCheckAfterSave()
+
+        return out
 
         
     def saveWithoutCheck(self):
@@ -714,6 +738,17 @@ class MainWindow(tk.Tk):
         else:
             # no
             return False
+
+
+    def sanityCheckAfterSave(self):
+        logLevel = self.implicitSanityCheck()
+
+        if logLevel >= logging.WARNING:
+            self.openSideFrame()
+            return False
+
+        return True
+
 
 
     def sanityCheckBeforeOpenSolutionEditor(self):
