@@ -70,7 +70,7 @@ class MainWindow(tk.Tk):
         self.cursorManager = tkx.CursorManager(self)
 
         self.frameMain = tk.Frame()
-        self.frameMain.pack(side=tk.LEFT, padx=self.PAD_X, pady=self.PAD_Y)
+        self.frameMain.pack(side=tk.LEFT, padx=self.PAD_X, pady=self.PAD_Y, anchor=tkc.N)
 
         self._levelEditorChildPanes = list()
         self._solutionEditorChildPanes = list()
