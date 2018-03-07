@@ -46,6 +46,10 @@ class KEY:
     VIEW_MOVABILITY_INDICATORS  = 'view-movability-indicators'
     AUTO_TRIGGER_SANITY_CHECK   = 'auto-trigger-sanity-check'
 
+    ASK_BEFORE_SAVE      = 'ask-before-save'
+    ASK_BEFORE_SAVE_AS   = 'ask-before-save-as'
+    ASK_BEFORE_SAVE_COPY = 'ask-before-save-copy'
+
     WIDTH_NOTES = 'width-notes'
     WIDTH_LABEL_INFO = 'width-selection-info'
 
@@ -210,6 +214,10 @@ class MainWindow(tk.Tk):
         settings.setdefault(KEY.DEFAULT_FILENAME_SAVE, None)
         settings.setdefault(KEY.DEFAULT_DIRECTORY_EXPORT, os.path.expanduser("~"))
         settings.setdefault(KEY.DEFAULT_FILENAME_EXPORT, None)
+
+        settings.setdefault(KEY.ASK_BEFORE_SAVE,      True)
+        settings.setdefault(KEY.ASK_BEFORE_SAVE_AS,   True)
+        settings.setdefault(KEY.ASK_BEFORE_SAVE_COPY, True)
 
         settings.setdefault(KEY.VIEW_MOVABILITY_INDICATORS, False)
         settings.setdefault(KEY.AUTO_TRIGGER_SANITY_CHECK, True)
@@ -558,17 +566,17 @@ class MainWindow(tk.Tk):
 
 
     def save(self):
-        if not self.sanityCheckBeforeSave():
+        if settings[KEY.ASK_BEFORE_SAVE] and not self.sanityCheckBeforeSave():
             return False
         return self.saveWithoutCheck()
 
     def saveAs(self):
-        if not self.sanityCheckBeforeSave():
+        if settings[KEY.ASK_BEFORE_SAVE_AS] and not self.sanityCheckBeforeSave():
             return False
         return self.saveAsWithoutCheck()
 
     def saveCopyAs(self):
-        if not self.sanityCheckBeforeSave():
+        if settings[KEY.ASK_BEFORE_SAVE_COPY] and not self.sanityCheckBeforeSave():
             return False
         return self.saveCopyAsWithoutCheck()
 
