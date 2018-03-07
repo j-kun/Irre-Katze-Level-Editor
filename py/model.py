@@ -1218,7 +1218,7 @@ class Model(object):
         self.onChange(self.CHANGE_BOARD)
 
 
-    # ---------- cursor ----------
+    # ---------- background ----------
 
     __nextElement = staticmethod( lambda l, e, inc:  l[(l.index(e) + inc) % len(l)] )
     
@@ -1232,19 +1232,43 @@ class Model(object):
     
     def nextBg(self):
         self.disableNotifications()
+
         self.nextBgBorder()
         self.nextBgUntouched()
         self.nextBgTouched()
+
         self.enableNotifications()
         self.onChange(self.CHANGE_BG)
     
     def prevBg(self):
         self.disableNotifications()
+
         self.prevBgBorder()
         self.prevBgUntouched()
         self.prevBgTouched()
+
         self.enableNotifications()
         self.onChange(self.CHANGE_BG)
+
+    
+    def setBgScheme(self, scheme):
+        self.disableNotifications()
+
+        out = False
+        value = backgrounds.pattern_fn.format(fld=1, scheme=scheme)
+        if value in backgrounds.CATEGORY_BORDER:
+            self.setBgBorder(value)
+            value = backgrounds.pattern_fn.format(fld=2, scheme=scheme)
+            if value in backgrounds.CATEGORY_UNTOUCHED:
+                self.setBgUntouched(value)
+                value = backgrounds.pattern_fn.format(fld=3, scheme=scheme)
+                if value in backgrounds.CATEGORY_TOUCHED:
+                    self.setBgTouched(value)
+                    out = True
+
+        self.enableNotifications()
+        self.onChange(self.CHANGE_BG)
+        return out
 
 
     # ---------- cursor ----------

@@ -319,17 +319,7 @@ class Board(tk.Canvas):
             return True
         elif code[:len(self.CODE_SET_BG)] == self.CODE_SET_BG:
             bg = code[len(self.CODE_SET_BG):].strip()
-            value = backgrounds.pattern_fn.format(fld=1, scheme=bg)
-            if value in backgrounds.CATEGORY_BORDER:
-                self.model.setBgBorder(value)
-                value = backgrounds.pattern_fn.format(fld=2, scheme=bg)
-                if value in backgrounds.CATEGORY_UNTOUCHED:
-                    self.model.setBgUntouched(value)
-                    value = backgrounds.pattern_fn.format(fld=3, scheme=bg)
-                    if value in backgrounds.CATEGORY_TOUCHED:
-                        self.model.setBgTouched(value)
-                        return True
-            return False
+            return self.model.setBgScheme(bg)
         elif code == self.CODE_BG_INC:
             self.model.nextBg()
             return True
