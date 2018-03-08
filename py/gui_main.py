@@ -46,9 +46,9 @@ class KEY:
     VIEW_MOVABILITY_INDICATORS  = 'view-movability-indicators'
     AUTO_TRIGGER_SANITY_CHECK   = 'auto-trigger-sanity-check'
 
-    ASK_BEFORE_SAVE      = 'ask-before-save'
-    ASK_BEFORE_SAVE_AS   = 'ask-before-save-as'
-    ASK_BEFORE_SAVE_COPY = 'ask-before-save-copy'
+    ASK_BEFORE_SAVE       = 'check-and-ask-if-wrong-before-save'
+    ASK_BEFORE_SAVE_AS    = 'check-and-ask-if-wrong-before-save-as'
+    ASK_BEFORE_SAVE_COPY  = 'check-and-ask-if-wrong-before-save-copy'
     CHECK_AFTER_SAVE      = 'check-after-save'
     CHECK_AFTER_SAVE_AS   = 'check-after-save-as'
     CHECK_AFTER_SAVE_COPY = 'check-after-save-copy'
@@ -221,6 +221,9 @@ class MainWindow(tk.Tk):
         settings.setdefault(KEY.ASK_BEFORE_SAVE,      True)
         settings.setdefault(KEY.ASK_BEFORE_SAVE_AS,   True)
         settings.setdefault(KEY.ASK_BEFORE_SAVE_COPY, True)
+
+        # will only be checked if ASK_BEFORE_SAVE settings are deactivated
+        # so these can be activated without the risk of double checking due to the above settings
         settings.setdefault(KEY.CHECK_AFTER_SAVE,      True)
         settings.setdefault(KEY.CHECK_AFTER_SAVE_AS,   True)
         settings.setdefault(KEY.CHECK_AFTER_SAVE_COPY, True)
