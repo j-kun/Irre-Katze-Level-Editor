@@ -684,7 +684,7 @@ class MainWindow(tk.Tk):
                 title = _("Failed to save"),
                 message = _("Failed to write file '{fn}'.").format(fn=ffn),
             )
-            return self.saveAs()
+            return self.saveAsWithoutCheck()
 
 
     # ---------- sanity check ----------
