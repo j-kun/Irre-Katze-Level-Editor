@@ -577,7 +577,7 @@ class MainWindow(tk.Tk):
 
         out = self.saveWithoutCheck()
 
-        if not settings[KEY.ASK_BEFORE_SAVE] and settings[KEY.CHECK_AFTER_SAVE]:
+        if out and not settings[KEY.ASK_BEFORE_SAVE] and settings[KEY.CHECK_AFTER_SAVE]:
             self.sanityCheckAfterSave()
 
         return out
@@ -588,7 +588,7 @@ class MainWindow(tk.Tk):
 
         out = self.saveAsWithoutCheck()
 
-        if not settings[KEY.ASK_BEFORE_SAVE_AS] and settings[KEY.CHECK_AFTER_SAVE_AS]:
+        if out and not settings[KEY.ASK_BEFORE_SAVE_AS] and settings[KEY.CHECK_AFTER_SAVE_AS]:
             self.sanityCheckAfterSave()
 
         return out
@@ -599,7 +599,7 @@ class MainWindow(tk.Tk):
 
         out = self.saveCopyAsWithoutCheck()
 
-        if not settings[KEY.ASK_BEFORE_SAVE_COPY] and settings[KEY.CHECK_AFTER_SAVE_COPY]:
+        if out and not settings[KEY.ASK_BEFORE_SAVE_COPY] and settings[KEY.CHECK_AFTER_SAVE_COPY]:
             self.sanityCheckAfterSave()
 
         return out
