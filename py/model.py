@@ -1294,6 +1294,8 @@ class Model(object):
         return out
     
 
+    # move to boundaries
+
     def moveCursorToTopLeft(self):
         assert self.setCursor(0,0)
         self.onCursorMoved()
@@ -1331,6 +1333,17 @@ class Model(object):
         dy = self.ROWS - 1 - max(self.cursors, key=lambda p: p[1])[1]
         self._moveCursors(0, dy)
 
+    def _moveCursors(self, dx, dy):
+        '''WARNING: this function does not check for borders'''
+        for i in range(len(self.cursors)):
+            x, y = self.cursors[i]
+            x += dx
+            y += dy
+            self.cursors[i] = (x, y)
+        self.onCursorMoved()
+        
+
+    # move one field
     
     def moveCursorRight(self):
         if not self.hasCursor():
@@ -1397,14 +1410,8 @@ class Model(object):
             y += self.ROWS
         return x, y
 
-    def _moveCursors(self, dx, dy):
-        for i in range(len(self.cursors)):
-            x, y = self.cursors[i]
-            x += dx
-            y += dy
-            self.cursors[i] = (x, y)
-        self.onCursorMoved()
-        
+    
+    # explicit coordinates
 
     def setCursor(self, x, y):
         if not self.isValidField(x, y):
@@ -1467,6 +1474,19 @@ class Model(object):
         return c0[0] == c1[0] + dx and c0[1] == c1[1] + dy
 
 
+    def toggleCursor(self, x, y):
+        if not self.isValidField(x, y):
+            return False
+        if (x, y) in self.cursors:
+            self.cursors.remove((x, y))
+        else:
+            self.cursors.append((x, y))
+        self.onCursorMoved()
+        return True
+    
+
+    # select range
+
     def addOrRemoveCursorLeft(self):
         self.addOrRemoveCursor(self.getLastCursorX()-1, self.getLastCursorY())
 
@@ -1492,6 +1512,8 @@ class Model(object):
         self.onCursorMoved()
 
 
+    # select area
+
     def addOrRemoveCursorsLeft(self):
         self.addOrRemoveCursors(-1, 0)
 
@@ -1516,16 +1538,7 @@ class Model(object):
         self.onCursorMoved()
 
 
-    def toggleCursor(self, x, y):
-        if not self.isValidField(x, y):
-            return False
-        if (x, y) in self.cursors:
-            self.cursors.remove((x, y))
-        else:
-            self.cursors.append((x, y))
-        self.onCursorMoved()
-        return True
-
+    # change number of cursors
 
     def selectNone(self):
         if len(self.cursors) == 0:
