@@ -1336,39 +1336,72 @@ class Model(object):
         if not self.hasCursor():
             self.moveCursorToTopLeft()
             return
-        self._moveCursors(+1, 0)
+
+        for i in range(len(self.cursors)):
+            self.cursors[i] = self.getFieldRightOf(self.cursors[i])
+        self.onCursorMoved()
 
     def moveCursorLeft(self):
         if not self.hasCursor():
             self.moveCursorToBottomRight()
             return
-        self._moveCursors(-1, 0)
+
+        for i in range(len(self.cursors)):
+            self.cursors[i] = self.getFieldLeftOf(self.cursors[i])
+        self.onCursorMoved()
 
     def moveCursorDown(self):
         if not self.hasCursor():
             self.moveCursorToTopLeft()
             return
-        self._moveCursors(0, +1)
+
+        for i in range(len(self.cursors)):
+            self.cursors[i] = self.getFieldBelowOf(self.cursors[i])
+        self.onCursorMoved()
 
     def moveCursorUp(self):
         if not self.hasCursor():
             self.moveCursorToBottomRight()
             return
-        self._moveCursors(0, -1)
+
+        for i in range(len(self.cursors)):
+            self.cursors[i] = self.getFieldAboveOf(self.cursors[i])
+        self.onCursorMoved()
+
+
+    def getFieldRightOf(self, cursor):
+        x, y = cursor
+        x += 1
+        if x >= self.COLS:
+            x = 0
+        return x, y
+
+    def getFieldLeftOf(self, cursor):
+        x, y = cursor
+        x -= 1
+        if x < 0:
+            x += self.COLS
+        return x, y
+
+    def getFieldBelowOf(self, cursor):
+        x, y = cursor
+        y += 1
+        if y >= self.ROWS:
+            y = 0
+        return x, y
+
+    def getFieldAboveOf(self, cursor):
+        x, y = cursor
+        y -= 1
+        if y < 0:
+            y += self.ROWS
+        return x, y
 
     def _moveCursors(self, dx, dy):
         for i in range(len(self.cursors)):
             x, y = self.cursors[i]
             x += dx
             y += dy
-            if x < 0:
-                x += self.COLS
-            elif x >= self.COLS:
-                x -= self.COLS
-            if y < 0:
-                y += self.ROWS
-            elif y >= self.ROWS:
-                y -= self.ROWS
             self.cursors[i] = (x, y)
         self.onCursorMoved()
         
