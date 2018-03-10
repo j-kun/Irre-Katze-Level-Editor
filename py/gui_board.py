@@ -109,6 +109,7 @@ class Board(tk.Canvas):
         self.canvas.bind('<Shift-Control-Up>'   , lambda e: model.addOrRemoveCursorsAbove())
         self.canvas.bind('<Shift-Control-Down>' , lambda e: model.addOrRemoveCursorsBelow())
         
+        self.canvas.bind('<BackSpace>' , lambda e: model.removeLastCursor())
         self.canvas.bind('<Home>' , lambda e: model.moveCursorToField(model.FLD_START) or model.moveCursorToTopLeft())
         self.canvas.bind('<End>'  , lambda e: model.moveCursorToField(model.FLD_END)   or model.moveCursorToBottomRight())
         

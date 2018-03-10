@@ -1563,6 +1563,13 @@ class Model(object):
             for y in range(self.ROWS):
                 self.cursors.append((x, y))
         self.onCursorMoved()
+
+    def removeLastCursor(self):
+        if len(self.cursors) == 0:
+            return False
+        self.cursors.removeLast()
+        self.onCursorMoved()
+        return True
     
 
     # new cursor / virtual cursor
