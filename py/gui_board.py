@@ -30,6 +30,11 @@ class Board(tk.Canvas):
     cursorFill  = cursorColor
     cursorStipple = tkc.STIPPLE_GRAY_25
 
+    virtualCursorWidth = 2
+    virtualCursorColor = 'green'
+    virtualCursorFill  = virtualCursorColor
+    virtualCursorStipple = tkc.STIPPLE_GRAY_12
+
     textStipple = tkc.STIPPLE_GRAY_25
     textFill    = 'white'
 
@@ -85,10 +90,14 @@ class Board(tk.Canvas):
         self.canvas.bind('<Up>'   , lambda e: model.moveCursorUp())
         self.canvas.bind('<Down>' , lambda e: model.moveCursorDown())
         
-        self.canvas.bind('<Control-Right>', lambda e: model.moveCursorToRight())
-        self.canvas.bind('<Control-Left>' , lambda e: model.moveCursorToLeft())
-        self.canvas.bind('<Control-Up>'   , lambda e: model.moveCursorToTop())
-        self.canvas.bind('<Control-Down>' , lambda e: model.moveCursorToBottom())
+        self.canvas.bind('<KeyPress-Control_L>', lambda e:   model.newCursorBegin())
+        self.canvas.bind('<KeyRelease-Control_L>', lambda e: model.newCursorEnd())
+        self.canvas.bind('<KeyPress-Control_R>', lambda e:   model.newCursorBegin())
+        self.canvas.bind('<KeyRelease-Control_R>', lambda e: model.newCursorEnd())
+        self.canvas.bind('<Control-Right>', lambda e: model.newCursorRight())
+        self.canvas.bind('<Control-Left>' , lambda e: model.newCursorLeft())
+        self.canvas.bind('<Control-Up>'   , lambda e: model.newCursorAbove())
+        self.canvas.bind('<Control-Down>' , lambda e: model.newCursorBelow())
 
         self.canvas.bind('<Shift-Right>', lambda e: model.addOrRemoveCursorRight())
         self.canvas.bind('<Shift-Left>' , lambda e: model.addOrRemoveCursorLeft())
@@ -481,10 +490,15 @@ class Board(tk.Canvas):
         if   self.debugCursor == self.DEBUG_CURSOR_OFF:
             fill = self.cursorFill
             stipple = self.cursorStipple
+            virtualCursorFill    = self.virtualCursorFill
+            virtualCursorStipple = self.virtualCursorStipple
         elif self.debugCursor == self.DEBUG_CURSOR_REAL:
             fill       = self.textFill
             debugColor = self.cursorColor
             stipple    = self.textStipple
+            virtualCursorFill       = self.textFill
+            virtualCursorDebugColor = self.virtualCursorColor
+            virtualCursorStipple    = self.textStipple
             indices = tuple(range(len(self.model.getCursors())))
         else:
             fill       = 'yellow'
@@ -517,6 +531,26 @@ class Board(tk.Canvas):
                     tags = (self.TAG_CURSOR),
                 )
                 i += 1
+
+        if self.model.hasVirtualCursor():
+            x,y = self.model.getVirtualCursor()
+
+            self.drawRectangle(x, y,
+                width   = self.virtualCursorWidth,
+                outline = self.virtualCursorColor,
+                stipple = virtualCursorStipple,
+                fill    = virtualCursorFill,
+                tags = (self.TAG_CURSOR),
+            )
+            if self.debugCursor:
+                self.drawText(x, y,
+                    text = 'v',
+                    font = "-weight bold",
+                    fill = virtualCursorDebugColor,
+                    tags = (self.TAG_CURSOR),
+                )
+                i += 1
+
                 
 
 

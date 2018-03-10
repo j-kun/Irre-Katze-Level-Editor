@@ -918,6 +918,7 @@ class Model(object):
 
         if self.clipboard == None:
             self.cursors = CursorList()
+            self.virtualCursor = None
 
         self._notificationsDisabled = False
 
@@ -1563,6 +1564,71 @@ class Model(object):
                 self.cursors.append((x, y))
         self.onCursorMoved()
     
+
+    # new cursor / virtual cursor
+
+    def hasVirtualCursor(self):
+        return self.virtualCursor != None
+
+    def getVirtualCursor(self):
+        return self.virtualCursor
+
+
+    def newCursorBegin(self):
+        pass
+
+    def newCursorEnd(self):
+        if self.virtualCursor == None:
+            return
+
+        if self.virtualCursor in self.cursors:
+            self.cursors.remove(self.virtualCursor)
+
+        self.cursors.append(self.virtualCursor)
+        self.virtualCursor = None
+        self.onCursorMoved()
+
+
+    def newCursorRight(self):
+        if self.virtualCursor == None:
+            if len(self.cursors) == 0:
+                self.virtualCursor = (0, 0)
+            else:
+                self.virtualCursor = self.cursors[-1]
+
+        self.virtualCursor = self.getFieldRightOf(self.virtualCursor)
+        self.onCursorMoved()
+
+    def newCursorLeft(self):
+        if self.virtualCursor == None:
+            if len(self.cursors) == 0:
+                self.virtualCursor = (self.COLS-1, self.ROWS-1)
+            else:
+                self.virtualCursor = self.cursors[-1]
+
+        self.virtualCursor = self.getFieldLeftOf(self.virtualCursor)
+        self.onCursorMoved()
+
+    def newCursorBelow(self):
+        if self.virtualCursor == None:
+            if len(self.cursors) == 0:
+                self.virtualCursor = (0, 0)
+            else:
+                self.virtualCursor = self.cursors[-1]
+
+        self.virtualCursor = self.getFieldBelowOf(self.virtualCursor)
+        self.onCursorMoved()
+
+    def newCursorAbove(self):
+        if self.virtualCursor == None:
+            if len(self.cursors) == 0:
+                self.virtualCursor = (self.COLS-1, self.ROWS-1)
+            else:
+                self.virtualCursor = self.cursors[-1]
+
+        self.virtualCursor = self.getFieldAboveOf(self.virtualCursor)
+        self.onCursorMoved()
+
 
     # ---------- input & output ----------
 
