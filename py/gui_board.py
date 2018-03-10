@@ -101,11 +101,10 @@ class Board(tk.Canvas):
         self.canvas.bind('<Control-Up>'   , lambda e: model.newCursorAbove())
         self.canvas.bind('<Control-Down>' , lambda e: model.newCursorBelow())
 
-        #TODO: respect isEndActive
-        self.canvas.bind('<Shift-Right>', lambda e: model.addOrRemoveCursorRight())
-        self.canvas.bind('<Shift-Left>' , lambda e: model.addOrRemoveCursorLeft())
-        self.canvas.bind('<Shift-Up>'   , lambda e: model.addOrRemoveCursorAbove())
-        self.canvas.bind('<Shift-Down>' , lambda e: model.addOrRemoveCursorBelow())
+        self.canvas.bind('<Shift-Right>', lambda e: model.addOrRemoveCursorRight() if not self.isEndActive else model.addCursorsTowardsRight())
+        self.canvas.bind('<Shift-Left>' , lambda e: model.addOrRemoveCursorLeft()  if not self.isEndActive else model.addCursorsTowardsLeft())
+        self.canvas.bind('<Shift-Up>'   , lambda e: model.addOrRemoveCursorAbove() if not self.isEndActive else model.addCursorsTowardsTop())
+        self.canvas.bind('<Shift-Down>' , lambda e: model.addOrRemoveCursorBelow() if not self.isEndActive else model.addCursorsTowardsBottom())
 
         #TODO: respect isEndActive
         self.canvas.bind('<Shift-Control-Right>', lambda e: model.addOrRemoveCursorsRight())

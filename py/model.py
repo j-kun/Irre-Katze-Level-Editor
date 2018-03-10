@@ -1513,6 +1513,37 @@ class Model(object):
         self.onCursorMoved()
 
 
+    # select range to border
+
+    def addCursorsTowardsLeft(self):
+        y = self.getLastCursorY()
+        for x in range(self.getLastCursorX()-1, 0-1, -1):
+            if (x,y) not in self.cursors:
+                self.cursors.append((x,y))
+        self.onCursorMoved()
+
+    def addCursorsTowardsRight(self):
+        y = self.getLastCursorY()
+        for x in range(self.getLastCursorX()+1, self.COLS):
+            if (x,y) not in self.cursors:
+                self.cursors.append((x,y))
+        self.onCursorMoved()
+
+    def addCursorsTowardsTop(self):
+        x = self.getLastCursorX()
+        for y in range(self.getLastCursorY()-1, 0-1, -1):
+            if (x,y) not in self.cursors:
+                self.cursors.append((x,y))
+        self.onCursorMoved()
+
+    def addCursorsTowardsBottom(self):
+        x = self.getLastCursorX()
+        for y in range(self.getLastCursorY()+1, self.ROWS):
+            if (x,y) not in self.cursors:
+                self.cursors.append((x,y))
+        self.onCursorMoved()
+
+
     # select area
 
     def addOrRemoveCursorsLeft(self):
