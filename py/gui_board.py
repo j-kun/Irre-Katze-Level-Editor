@@ -67,6 +67,7 @@ class Board(tk.Canvas):
         self.model = model
         self._mode = self.MODE_EDIT_LEVEL
         self._last_cmd = None
+        self.isEndActive = False
         
         self.canvas = self
         self.canvas.bindToKey = tkx.KeyBinder(self.canvas)
@@ -85,33 +86,37 @@ class Board(tk.Canvas):
         model.solution.addOnCursorChangeListener(self.onSolutionChangeListener)
 
         # move cursor
-        self.canvas.bind('<Right>', lambda e: model.moveCursorRight())
-        self.canvas.bind('<Left>' , lambda e: model.moveCursorLeft())
-        self.canvas.bind('<Up>'   , lambda e: model.moveCursorUp())
-        self.canvas.bind('<Down>' , lambda e: model.moveCursorDown())
+        self.canvas.bind('<Right>', lambda e: model.moveCursorRight() if not self.isEndActive else model.moveCursorToRight())
+        self.canvas.bind('<Left>' , lambda e: model.moveCursorLeft()  if not self.isEndActive else model.moveCursorToLeft())
+        self.canvas.bind('<Up>'   , lambda e: model.moveCursorUp()    if not self.isEndActive else model.moveCursorToTop())
+        self.canvas.bind('<Down>' , lambda e: model.moveCursorDown()  if not self.isEndActive else model.moveCursorToBottom())
         
         self.canvas.bind('<KeyPress-Control_L>', lambda e:   model.newCursorBegin())
         self.canvas.bind('<KeyRelease-Control_L>', lambda e: model.newCursorEnd())
         self.canvas.bind('<KeyPress-Control_R>', lambda e:   model.newCursorBegin())
         self.canvas.bind('<KeyRelease-Control_R>', lambda e: model.newCursorEnd())
+        #TODO: respect isEndActive
         self.canvas.bind('<Control-Right>', lambda e: model.newCursorRight())
         self.canvas.bind('<Control-Left>' , lambda e: model.newCursorLeft())
         self.canvas.bind('<Control-Up>'   , lambda e: model.newCursorAbove())
         self.canvas.bind('<Control-Down>' , lambda e: model.newCursorBelow())
 
+        #TODO: respect isEndActive
         self.canvas.bind('<Shift-Right>', lambda e: model.addOrRemoveCursorRight())
         self.canvas.bind('<Shift-Left>' , lambda e: model.addOrRemoveCursorLeft())
         self.canvas.bind('<Shift-Up>'   , lambda e: model.addOrRemoveCursorAbove())
         self.canvas.bind('<Shift-Down>' , lambda e: model.addOrRemoveCursorBelow())
 
+        #TODO: respect isEndActive
         self.canvas.bind('<Shift-Control-Right>', lambda e: model.addOrRemoveCursorsRight())
         self.canvas.bind('<Shift-Control-Left>' , lambda e: model.addOrRemoveCursorsLeft())
         self.canvas.bind('<Shift-Control-Up>'   , lambda e: model.addOrRemoveCursorsAbove())
         self.canvas.bind('<Shift-Control-Down>' , lambda e: model.addOrRemoveCursorsBelow())
         
         self.canvas.bind('<BackSpace>' , lambda e: model.removeLastCursor())
+        #TODO: what is home supposed to do now since end has changed?
         self.canvas.bind('<Home>' , lambda e: model.moveCursorToField(model.FLD_START) or model.moveCursorToTopLeft())
-        self.canvas.bind('<End>'  , lambda e: model.moveCursorToField(model.FLD_END)   or model.moveCursorToBottomRight())
+        self.canvas.bind('<End>', self.onEndPress)
         
         self.canvas.bind('<Button-1>', self.onClick)
         self.canvas.bind('<Escape>' , lambda e: model.selectOne() or model.selectNone())
@@ -130,6 +135,7 @@ class Board(tk.Canvas):
         self.canvas.bind('<Return>' ,  lambda e: self.enterNewObject())
         self.canvas.bind('<Key>' ,  self.onKeyListener)
         
+        #TODO: respect isEndActive
         self.canvas.bind('<Alt-Right>', lambda e: model.moveFieldRight())
         self.canvas.bind('<Alt-Left>', lambda e: model.moveFieldLeft())
         self.canvas.bind('<Alt-Up>', lambda e: model.moveFieldUp())
@@ -187,6 +193,8 @@ class Board(tk.Canvas):
     # ---------- listen to model ----------
 
     def onChangeListener(self, change):
+        self.isEndActive = False
+
         model = self.model
         done = False
         if change in (model.CHANGE_BG_BORDER, model.CHANGE_BG):
@@ -222,6 +230,9 @@ class Board(tk.Canvas):
 
 
     # ---------- listen to gui ----------
+
+    def onEndPress(self, event=None):
+        self.isEndActive = True
 
     def onClick(self, event):
         if self.isModeEditSolution():
