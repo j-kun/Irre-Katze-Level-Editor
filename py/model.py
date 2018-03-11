@@ -1623,6 +1623,13 @@ class Model(object):
         self.virtualCursor = None
         self.onCursorMoved()
 
+    def newCursorCancel(self):
+        if self.virtualCursor == None:
+            return False
+
+        self.virtualCursor = None
+        self.onCursorMoved()
+        return True
 
     def newCursorRight(self):
         if self.virtualCursor == None:
