@@ -1681,6 +1681,49 @@ class Model(object):
         self.onCursorMoved()
 
 
+    # new cursor / virtual cursor to border
+
+    def newCursorToRight(self):
+        if self.virtualCursor == None:
+            if len(self.cursors) == 0:
+                self.virtualCursor = (0, 0)
+            else:
+                self.virtualCursor = self.cursors[-1]
+
+        self.virtualCursor = (self.COLS-1, self.virtualCursor[1])
+        self.onCursorMoved()
+
+    def newCursorToLeft(self):
+        if self.virtualCursor == None:
+            if len(self.cursors) == 0:
+                self.virtualCursor = (self.COLS-1, self.ROWS-1)
+            else:
+                self.virtualCursor = self.cursors[-1]
+
+        self.virtualCursor = (0, self.virtualCursor[1])
+        self.onCursorMoved()
+
+    def newCursorToBottom(self):
+        if self.virtualCursor == None:
+            if len(self.cursors) == 0:
+                self.virtualCursor = (0, 0)
+            else:
+                self.virtualCursor = self.cursors[-1]
+
+        self.virtualCursor = (self.virtualCursor[0], self.ROWS-1)
+        self.onCursorMoved()
+
+    def newCursorToTop(self):
+        if self.virtualCursor == None:
+            if len(self.cursors) == 0:
+                self.virtualCursor = (self.COLS-1, self.ROWS-1)
+            else:
+                self.virtualCursor = self.cursors[-1]
+
+        self.virtualCursor = (self.virtualCursor[0], 0)
+        self.onCursorMoved()
+
+
     # ---------- input & output ----------
 
     SENTINEL_NOTES = '# ---------- NOTES ----------'

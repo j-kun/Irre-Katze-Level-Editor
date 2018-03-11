@@ -96,10 +96,10 @@ class Board(tk.Canvas):
         self.canvas.bind('<KeyPress-Control_R>', lambda e:   model.newCursorBegin())
         self.canvas.bind('<KeyRelease-Control_R>', lambda e: model.newCursorEnd())
         #TODO: respect isEndActive
-        self.canvas.bind('<Control-Right>', lambda e: model.newCursorRight())
-        self.canvas.bind('<Control-Left>' , lambda e: model.newCursorLeft())
-        self.canvas.bind('<Control-Up>'   , lambda e: model.newCursorAbove())
-        self.canvas.bind('<Control-Down>' , lambda e: model.newCursorBelow())
+        self.canvas.bind('<Control-Right>', lambda e: model.newCursorRight() if not self.isEndActive else model.newCursorToRight())
+        self.canvas.bind('<Control-Left>' , lambda e: model.newCursorLeft()  if not self.isEndActive else model.newCursorToLeft())
+        self.canvas.bind('<Control-Up>'   , lambda e: model.newCursorAbove() if not self.isEndActive else model.newCursorToTop())
+        self.canvas.bind('<Control-Down>' , lambda e: model.newCursorBelow() if not self.isEndActive else model.newCursorToBottom())
 
         self.canvas.bind('<Shift-Right>', lambda e: model.addOrRemoveCursorRight() if not self.isEndActive else model.addCursorsTowardsRight())
         self.canvas.bind('<Shift-Left>' , lambda e: model.addOrRemoveCursorLeft()  if not self.isEndActive else model.addCursorsTowardsLeft())
