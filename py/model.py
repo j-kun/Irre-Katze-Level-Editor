@@ -1631,10 +1631,13 @@ class Model(object):
         self.onCursorMoved()
         return True
 
+
     def newCursorRight(self):
         if self.virtualCursor == None:
             if len(self.cursors) == 0:
                 self.virtualCursor = (0, 0)
+                self.onCursorMoved()
+                return
             else:
                 self.virtualCursor = self.cursors[-1]
 
@@ -1645,6 +1648,8 @@ class Model(object):
         if self.virtualCursor == None:
             if len(self.cursors) == 0:
                 self.virtualCursor = (self.COLS-1, self.ROWS-1)
+                self.onCursorMoved()
+                return
             else:
                 self.virtualCursor = self.cursors[-1]
 
@@ -1655,6 +1660,8 @@ class Model(object):
         if self.virtualCursor == None:
             if len(self.cursors) == 0:
                 self.virtualCursor = (0, 0)
+                self.onCursorMoved()
+                return
             else:
                 self.virtualCursor = self.cursors[-1]
 
@@ -1665,6 +1672,8 @@ class Model(object):
         if self.virtualCursor == None:
             if len(self.cursors) == 0:
                 self.virtualCursor = (self.COLS-1, self.ROWS-1)
+                self.onCursorMoved()
+                return
             else:
                 self.virtualCursor = self.cursors[-1]
 
