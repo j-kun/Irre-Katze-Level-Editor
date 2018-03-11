@@ -1478,18 +1478,38 @@ class Model(object):
     # select range
 
     def addOrRemoveCursorLeft(self):
+        if not self.hasCursor():
+            self.moveCursorToStartForLeft()
+            return
+
         self.addOrRemoveCursor(self.getLastCursorX()-1, self.getLastCursorY())
 
     def addOrRemoveCursorRight(self):
+        if not self.hasCursor():
+            self.moveCursorToStartForRight()
+            return
+
         self.addOrRemoveCursor(self.getLastCursorX()+1, self.getLastCursorY())
 
     def addOrRemoveCursorAbove(self):
+        if not self.hasCursor():
+            self.moveCursorToStartForUp()
+            return
+
         self.addOrRemoveCursor(self.getLastCursorX(), self.getLastCursorY()-1)
 
     def addOrRemoveCursorBelow(self):
+        if not self.hasCursor():
+            self.moveCursorToStartForDown()
+            return
+
         self.addOrRemoveCursor(self.getLastCursorX(), self.getLastCursorY()+1)
 
     def addOrRemoveCursor(self, x, y):
+        if not self.hasCursor():
+            self.moveCursorToStartForRight()
+            return
+
         cursor = (x, y)
         if not self.isValidField(x, y):
             return
