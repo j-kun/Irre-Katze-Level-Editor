@@ -1459,20 +1459,15 @@ class Model(object):
             i -= 1
 
     def removeCursors(self, dx, dy):
-        i = len(self.cursors) - 1
-        wasLastNeighbour = False
-        while i >= 1:
-            if self._isCursorNeighbour(self.cursors[i-1], self.cursors[i], dx, dy):
-                if not wasLastNeighbour:
-                    del self.cursors[i]
-                wasLastNeighbour = True
-            else:
-                wasLastNeighbour = False
-            i -= 1
+        toBeRemoved = list()
+        for i in range(len(self.cursors)-1, -1, -1):
+            c = self.cursors[i]
+            c = (c[0]-dx, c[1]-dy)
+            if c not in self.cursors:
+                toBeRemoved.append(i)
 
-    @staticmethod
-    def _isCursorNeighbour(c0, c1, dx, dy):
-        return c0[0] == c1[0] + dx and c0[1] == c1[1] + dy
+        for i in toBeRemoved:
+            del self.cursors[i]
 
 
     def toggleCursor(self, x, y):
@@ -1560,7 +1555,7 @@ class Model(object):
 
     def addOrRemoveCursors(self, dx, dy):
         cursor = (self.getLastCursorX() + dx, self.getLastCursorY() + dy)
-        if len(self.cursors)>=2 and cursor == self.cursors[-2]:
+        if len(self.cursors)>=2 and cursor in self.cursors:
             self.removeCursors(dx, dy)
         else:
             self.addCursors(dx, dy)
