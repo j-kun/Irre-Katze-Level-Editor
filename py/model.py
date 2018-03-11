@@ -1305,6 +1305,10 @@ class Model(object):
         assert self.setCursor(self.COLS-1, self.ROWS-1)
         self.onCursorMoved()
 
+    def moveCursorToCenter(self):
+        assert self.setCursor((self.COLS-1)//2, (self.ROWS-1)//2)
+        self.onCursorMoved()
+
 
     def moveCursorToLeft(self):
         if not self.hasCursor():

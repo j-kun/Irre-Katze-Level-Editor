@@ -113,8 +113,7 @@ class Board(tk.Canvas):
         self.canvas.bind('<Shift-Control-Down>' , lambda e: model.addOrRemoveCursorsBelow())
         
         self.canvas.bind('<BackSpace>' , lambda e: model.removeLastCursor())
-        #TODO: what is home supposed to do now since end has changed?
-        self.canvas.bind('<Home>' , lambda e: model.moveCursorToField(model.FLD_START) or model.moveCursorToTopLeft())
+        self.canvas.bind('<Home>' , lambda e: model.moveCursorToCenter())
         self.canvas.bind('<End>', self.onEndPress)
         
         self.canvas.bind('<Button-1>', self.onClick)
