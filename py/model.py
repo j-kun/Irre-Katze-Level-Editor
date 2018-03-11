@@ -1295,46 +1295,56 @@ class Model(object):
         return out
     
 
-    # move to boundaries
+    # move to border
 
-    def moveCursorToTopLeft(self):
-        assert self.setCursor(0,0)
+    CURSOR_START_FOR_RIGHT = (0, 0)
+    CURSOR_START_FOR_DOWN  = (0, 0)
+    CURSOR_START_FOR_LEFT  = (COLS-1, ROWS-1)
+    CURSOR_START_FOR_UP    = (COLS-1, ROWS-1)
+    COR_CENTER             = ((COLS-1)//2, (ROWS-1)//2)
+
+    def moveCursorToStartForLeft(self):
+        assert self.setCursor(*self.CURSOR_START_FOR_LEFT)
         self.onCursorMoved()
 
-    def moveCursorToBottomRight(self):
-        assert self.setCursor(self.COLS-1, self.ROWS-1)
+    def moveCursorToStartForRight(self):
+        assert self.setCursor(*self.CURSOR_START_FOR_RIGHT)
+        self.onCursorMoved()
+
+    def moveCursorToStartForUp(self):
+        assert self.setCursor(*self.CURSOR_START_FOR_UP)
+        self.onCursorMoved()
+
+    def moveCursorToStartForDown(self):
+        assert self.setCursor(*self.CURSOR_START_FOR_DOWN)
         self.onCursorMoved()
 
     def moveCursorToCenter(self):
-        assert self.setCursor((self.COLS-1)//2, (self.ROWS-1)//2)
+        assert self.setCursor(*self.COR_CENTER)
         self.onCursorMoved()
 
 
     def moveCursorToLeft(self):
         if not self.hasCursor():
-            self.moveCursorToTopLeft()
-            return
+            self.cursors.append(self.CURSOR_START_FOR_LEFT)
         dx = - min(self.cursors, key=lambda p: p[0])[0]
         self._moveCursors(dx, 0)
 
     def moveCursorToRight(self):
         if not self.hasCursor():
-            self.moveCursorToBottomRight()
-            return
+            self.cursors.append(self.CURSOR_START_FOR_RIGHT)
         dx = self.COLS - 1 - max(self.cursors, key=lambda p: p[0])[0]
         self._moveCursors(dx, 0)
     
     def moveCursorToTop(self):
         if not self.hasCursor():
-            self.moveCursorToTopLeft()
-            return
+            self.cursors.append(self.CURSOR_START_FOR_UP)
         dy = - min(self.cursors, key=lambda p: p[1])[1]
         self._moveCursors(0, dy)
 
     def moveCursorToBottom(self):
         if not self.hasCursor():
-            self.moveCursorToBottomRight()
-            return
+            self.cursors.append(self.CURSOR_START_FOR_DOWN)
         dy = self.ROWS - 1 - max(self.cursors, key=lambda p: p[1])[1]
         self._moveCursors(0, dy)
 
@@ -1352,7 +1362,7 @@ class Model(object):
     
     def moveCursorRight(self):
         if not self.hasCursor():
-            self.moveCursorToTopLeft()
+            self.moveCursorToStartForRight()
             return
 
         for i in range(len(self.cursors)):
@@ -1361,7 +1371,7 @@ class Model(object):
 
     def moveCursorLeft(self):
         if not self.hasCursor():
-            self.moveCursorToBottomRight()
+            self.moveCursorToStartForLeft()
             return
 
         for i in range(len(self.cursors)):
@@ -1370,7 +1380,7 @@ class Model(object):
 
     def moveCursorDown(self):
         if not self.hasCursor():
-            self.moveCursorToTopLeft()
+            self.moveCursorToStartForDown()
             return
 
         for i in range(len(self.cursors)):
@@ -1379,7 +1389,7 @@ class Model(object):
 
     def moveCursorUp(self):
         if not self.hasCursor():
-            self.moveCursorToBottomRight()
+            self.moveCursorToStartForUp()
             return
 
         for i in range(len(self.cursors)):
@@ -1635,7 +1645,7 @@ class Model(object):
     def newCursorRight(self):
         if self.virtualCursor == None:
             if len(self.cursors) == 0:
-                self.virtualCursor = (0, 0)
+                self.virtualCursor = self.CURSOR_START_FOR_RIGHT
                 self.onCursorMoved()
                 return
             else:
@@ -1647,7 +1657,7 @@ class Model(object):
     def newCursorLeft(self):
         if self.virtualCursor == None:
             if len(self.cursors) == 0:
-                self.virtualCursor = (self.COLS-1, self.ROWS-1)
+                self.virtualCursor = self.CURSOR_START_FOR_LEFT
                 self.onCursorMoved()
                 return
             else:
@@ -1659,7 +1669,7 @@ class Model(object):
     def newCursorBelow(self):
         if self.virtualCursor == None:
             if len(self.cursors) == 0:
-                self.virtualCursor = (0, 0)
+                self.virtualCursor = self.CURSOR_START_FOR_DOWN
                 self.onCursorMoved()
                 return
             else:
@@ -1671,7 +1681,7 @@ class Model(object):
     def newCursorAbove(self):
         if self.virtualCursor == None:
             if len(self.cursors) == 0:
-                self.virtualCursor = (self.COLS-1, self.ROWS-1)
+                self.virtualCursor = self.CURSOR_START_FOR_UP
                 self.onCursorMoved()
                 return
             else:
@@ -1686,7 +1696,7 @@ class Model(object):
     def newCursorToRight(self):
         if self.virtualCursor == None:
             if len(self.cursors) == 0:
-                self.virtualCursor = (0, 0)
+                self.virtualCursor = self.CURSOR_START_FOR_RIGHT
             else:
                 self.virtualCursor = self.cursors[-1]
 
@@ -1696,7 +1706,7 @@ class Model(object):
     def newCursorToLeft(self):
         if self.virtualCursor == None:
             if len(self.cursors) == 0:
-                self.virtualCursor = (self.COLS-1, self.ROWS-1)
+                self.virtualCursor = self.CURSOR_START_FOR_LEFT
             else:
                 self.virtualCursor = self.cursors[-1]
 
@@ -1706,7 +1716,7 @@ class Model(object):
     def newCursorToBottom(self):
         if self.virtualCursor == None:
             if len(self.cursors) == 0:
-                self.virtualCursor = (0, 0)
+                self.virtualCursor = self.CURSOR_START_FOR_DOWN
             else:
                 self.virtualCursor = self.cursors[-1]
 
@@ -1716,7 +1726,7 @@ class Model(object):
     def newCursorToTop(self):
         if self.virtualCursor == None:
             if len(self.cursors) == 0:
-                self.virtualCursor = (self.COLS-1, self.ROWS-1)
+                self.virtualCursor = self.CURSOR_START_FOR_UP
             else:
                 self.virtualCursor = self.cursors[-1]
 
