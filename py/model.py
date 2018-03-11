@@ -1449,26 +1449,6 @@ class Model(object):
         self.onCursorMoved()
         return True
 
-    def addCursors(self, dx, dy):
-        i = len(self.cursors) - 1
-        while i >= 0:
-            oldCursor = self.cursors[i]
-            newCursor = (oldCursor[0]+dx, oldCursor[1]+dy)
-            if newCursor not in self.cursors and self.isValidField(*newCursor):
-                self.cursors.insert(i+1, newCursor)
-            i -= 1
-
-    def removeCursors(self, dx, dy):
-        toBeRemoved = list()
-        for i in range(len(self.cursors)-1, -1, -1):
-            c = self.cursors[i]
-            c = (c[0]-dx, c[1]-dy)
-            if c not in self.cursors:
-                toBeRemoved.append(i)
-
-        for i in toBeRemoved:
-            del self.cursors[i]
-
 
     def toggleCursor(self, x, y):
         if not self.isValidField(x, y):
@@ -1563,6 +1543,27 @@ class Model(object):
             #if self.isValidField(*cursor):
             #    self.cursors.setLast(cursor)
         self.onCursorMoved()
+
+
+    def addCursors(self, dx, dy):
+        i = len(self.cursors) - 1
+        while i >= 0:
+            oldCursor = self.cursors[i]
+            newCursor = (oldCursor[0]+dx, oldCursor[1]+dy)
+            if newCursor not in self.cursors and self.isValidField(*newCursor):
+                self.cursors.insert(i+1, newCursor)
+            i -= 1
+
+    def removeCursors(self, dx, dy):
+        toBeRemoved = list()
+        for i in range(len(self.cursors)-1, -1, -1):
+            c = self.cursors[i]
+            c = (c[0]-dx, c[1]-dy)
+            if c not in self.cursors:
+                toBeRemoved.append(i)
+
+        for i in toBeRemoved:
+            del self.cursors[i]
 
 
     # change number of cursors
