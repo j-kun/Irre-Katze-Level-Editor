@@ -1525,6 +1525,9 @@ class Model(object):
     # select range to border
 
     def addCursorsTowardsLeft(self):
+        if not self.hasCursor():
+            self.cursors.append(self.CURSOR_START_FOR_LEFT)
+
         y = self.getLastCursorY()
         for x in range(self.getLastCursorX()-1, 0-1, -1):
             if (x,y) not in self.cursors:
@@ -1532,6 +1535,9 @@ class Model(object):
         self.onCursorMoved()
 
     def addCursorsTowardsRight(self):
+        if not self.hasCursor():
+            self.cursors.append(self.CURSOR_START_FOR_RIGHT)
+
         y = self.getLastCursorY()
         for x in range(self.getLastCursorX()+1, self.COLS):
             if (x,y) not in self.cursors:
@@ -1539,6 +1545,9 @@ class Model(object):
         self.onCursorMoved()
 
     def addCursorsTowardsTop(self):
+        if not self.hasCursor():
+            self.cursors.append(self.CURSOR_START_FOR_UP)
+
         x = self.getLastCursorX()
         for y in range(self.getLastCursorY()-1, 0-1, -1):
             if (x,y) not in self.cursors:
@@ -1546,6 +1555,9 @@ class Model(object):
         self.onCursorMoved()
 
     def addCursorsTowardsBottom(self):
+        if not self.hasCursor():
+            self.cursors.append(self.CURSOR_START_FOR_DOWN)
+
         x = self.getLastCursorX()
         for y in range(self.getLastCursorY()+1, self.ROWS):
             if (x,y) not in self.cursors:
