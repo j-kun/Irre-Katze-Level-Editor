@@ -1539,9 +1539,6 @@ class Model(object):
             self.removeCursors(dx, dy)
         else:
             self.addCursors(dx, dy)
-            #TODO: do I want this?
-            #if self.isValidField(*cursor):
-            #    self.cursors.setLast(cursor)
         self.onCursorMoved()
 
 
