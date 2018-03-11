@@ -1568,15 +1568,31 @@ class Model(object):
     # select area
 
     def addOrRemoveCursorsLeft(self):
+        if not self.hasCursor():
+            self.moveCursorToStartForLeft()
+            return
+
         self.addOrRemoveCursors(-1, 0)
 
     def addOrRemoveCursorsRight(self):
+        if not self.hasCursor():
+            self.moveCursorToStartForRight()
+            return
+
         self.addOrRemoveCursors(+1, 0)
 
     def addOrRemoveCursorsAbove(self):
+        if not self.hasCursor():
+            self.moveCursorToStartForUp()
+            return
+
         self.addOrRemoveCursors(0, -1)
 
     def addOrRemoveCursorsBelow(self):
+        if not self.hasCursor():
+            self.moveCursorToStartForDown()
+            return
+
         self.addOrRemoveCursors(0, +1)
 
     def addOrRemoveCursors(self, dx, dy):
