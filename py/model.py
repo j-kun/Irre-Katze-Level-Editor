@@ -1580,52 +1580,63 @@ class Model(object):
             self.moveCursorToStartForLeft()
             return
 
-        self.addOrRemoveCursors(-1, 0)
+        self.addOrRemoveCursors(self.getFieldLeftOf)
 
     def addOrRemoveCursorsRight(self):
         if not self.hasCursor():
             self.moveCursorToStartForRight()
             return
 
-        self.addOrRemoveCursors(+1, 0)
+        self.addOrRemoveCursors(self.getFieldRightOf)
 
     def addOrRemoveCursorsAbove(self):
         if not self.hasCursor():
             self.moveCursorToStartForUp()
             return
 
-        self.addOrRemoveCursors(0, -1)
+        self.addOrRemoveCursors(self.getFieldAboveOf)
 
     def addOrRemoveCursorsBelow(self):
         if not self.hasCursor():
             self.moveCursorToStartForDown()
             return
 
-        self.addOrRemoveCursors(0, +1)
+        self.addOrRemoveCursors(self.getFieldBelowOf)
 
-    def addOrRemoveCursors(self, dx, dy):
-        cursor = (self.getLastCursorX() + dx, self.getLastCursorY() + dy)
+    def addOrRemoveCursors(self, getNextField):
+        cursor = getNextField(self.getLastCursor())
         if len(self.cursors)>=2 and cursor in self.cursors:
-            self.removeCursors(dx, dy)
+            self.removeCursors(getNextField)
         else:
-            self.addCursors(dx, dy)
+            self.addCursors(getNextField)
         self.onCursorMoved()
 
 
-    def addCursors(self, dx, dy):
+    def addCursors(self, getNextField):
         i = len(self.cursors) - 1
         while i >= 0:
             oldCursor = self.cursors[i]
-            newCursor = (oldCursor[0]+dx, oldCursor[1]+dy)
+            newCursor = getNextField(oldCursor)
             if newCursor not in self.cursors and self.isValidField(*newCursor):
                 self.cursors.insert(i+1, newCursor)
             i -= 1
 
-    def removeCursors(self, dx, dy):
+    def removeCursors(self, getNextField):
+        if getNextField == self.getFieldRightOf:
+            getPrevField = self.getFieldLeftOf
+        elif getNextField == self.getFieldBelowOf:
+            getPrevField = self.getFieldAboveOf
+        elif getNextField == self.getFieldLeftOf:
+            getPrevField = self.getFieldRightOf
+        elif getNextField == self.getFieldAboveOf:
+            getPrevField = self.getFieldBelowOf
+        else:
+            assert False
+
         toBeRemoved = list()
         for i in range(len(self.cursors)-1, -1, -1):
             c = self.cursors[i]
-            c = (c[0]-dx, c[1]-dy)
+            c = getPrevField(c)
             if c not in self.cursors:
                 toBeRemoved.append(i)
 
