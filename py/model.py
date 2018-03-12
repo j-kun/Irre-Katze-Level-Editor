@@ -1537,39 +1537,38 @@ class Model(object):
             self.cursors.append(self.CURSOR_START_FOR_LEFT)
 
         y = self.getLastCursorY()
-        for x in range(self.getLastCursorX()-1, 0-1, -1):
-            if (x,y) not in self.cursors:
-                self.cursors.append((x,y))
-        self.onCursorMoved()
+        cursors = ((x,y) for x in range(self.getLastCursorX()-1, -1, -1))
+        self.addCursorsIfNotExisting(cursors)
 
     def addCursorsTowardsRight(self):
         if not self.hasCursor():
             self.cursors.append(self.CURSOR_START_FOR_RIGHT)
 
         y = self.getLastCursorY()
-        for x in range(self.getLastCursorX()+1, self.COLS):
-            if (x,y) not in self.cursors:
-                self.cursors.append((x,y))
-        self.onCursorMoved()
+        cursors = ((x,y) for x in range(self.getLastCursorX()+1, self.COLS))
+        self.addCursorsIfNotExisting(cursors)
 
     def addCursorsTowardsTop(self):
         if not self.hasCursor():
             self.cursors.append(self.CURSOR_START_FOR_UP)
 
         x = self.getLastCursorX()
-        for y in range(self.getLastCursorY()-1, 0-1, -1):
-            if (x,y) not in self.cursors:
-                self.cursors.append((x,y))
-        self.onCursorMoved()
+        cursors = ((x,y) for y in range(self.getLastCursorY()-1, -1, -1))
+        self.addCursorsIfNotExisting(cursors)
 
     def addCursorsTowardsBottom(self):
         if not self.hasCursor():
             self.cursors.append(self.CURSOR_START_FOR_DOWN)
 
         x = self.getLastCursorX()
-        for y in range(self.getLastCursorY()+1, self.ROWS):
-            if (x,y) not in self.cursors:
-                self.cursors.append((x,y))
+        cursors = ((x,y) for y in range(self.getLastCursorY()+1, self.ROWS))
+        self.addCursorsIfNotExisting(cursors)
+
+    def addCursorsIfNotExisting(self, cursors):
+        for cursor in cursors:
+            if cursor not in self.cursors:
+                self.cursors.append(cursor)
+
         self.onCursorMoved()
 
 
