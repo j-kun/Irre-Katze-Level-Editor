@@ -1368,35 +1368,34 @@ class Model(object):
             self.moveCursorToStartForRight()
             return
 
-        for i in range(len(self.cursors)):
-            self.cursors[i] = self.getFieldRightOf(self.cursors[i])
-        self.onCursorMoved()
+        self.moveCursor(self.getFieldRightOf)
 
     def moveCursorLeft(self):
         if not self.hasCursor():
             self.moveCursorToStartForLeft()
             return
 
-        for i in range(len(self.cursors)):
-            self.cursors[i] = self.getFieldLeftOf(self.cursors[i])
-        self.onCursorMoved()
+        self.moveCursor(self.getFieldLeftOf)
 
     def moveCursorDown(self):
         if not self.hasCursor():
             self.moveCursorToStartForDown()
             return
 
-        for i in range(len(self.cursors)):
-            self.cursors[i] = self.getFieldBelowOf(self.cursors[i])
-        self.onCursorMoved()
+        self.moveCursor(self.getFieldBelowOf)
 
     def moveCursorUp(self):
         if not self.hasCursor():
             self.moveCursorToStartForUp()
             return
 
+        self.moveCursor(self.getFieldAboveOf)
+
+
+    def moveCursor(self, getNextField):
         for i in range(len(self.cursors)):
-            self.cursors[i] = self.getFieldAboveOf(self.cursors[i])
+            self.cursors[i] = getNextField(self.cursors[i])
+
         self.onCursorMoved()
 
 
