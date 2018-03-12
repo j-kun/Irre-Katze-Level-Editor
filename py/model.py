@@ -1277,6 +1277,9 @@ class Model(object):
     def getCursors(self):
         return self.cursors
 
+    def getLastCursor(self):
+        return self.cursors[-1]
+
     def getLastCursorX(self):
         return self.cursors[-1][0]
 
@@ -1482,28 +1485,33 @@ class Model(object):
             self.moveCursorToStartForLeft()
             return
 
-        self.addOrRemoveCursor(self.getLastCursorX()-1, self.getLastCursorY())
+        x, y = self.getFieldLeftOf(self.getLastCursor())
+        self.addOrRemoveCursor(x, y)
 
     def addOrRemoveCursorRight(self):
         if not self.hasCursor():
             self.moveCursorToStartForRight()
             return
 
-        self.addOrRemoveCursor(self.getLastCursorX()+1, self.getLastCursorY())
+        x, y = self.getFieldRightOf(self.getLastCursor())
+        self.addOrRemoveCursor(x, y)
 
     def addOrRemoveCursorAbove(self):
         if not self.hasCursor():
             self.moveCursorToStartForUp()
             return
 
-        self.addOrRemoveCursor(self.getLastCursorX(), self.getLastCursorY()-1)
+        x, y = self.getFieldAboveOf(self.getLastCursor())
+        self.addOrRemoveCursor(x, y)
 
     def addOrRemoveCursorBelow(self):
         if not self.hasCursor():
             self.moveCursorToStartForDown()
             return
 
-        self.addOrRemoveCursor(self.getLastCursorX(), self.getLastCursorY()+1)
+        x, y = self.getFieldBelowOf(self.getLastCursor())
+        self.addOrRemoveCursor(x, y)
+
 
     def addOrRemoveCursor(self, x, y):
         if not self.hasCursor():
