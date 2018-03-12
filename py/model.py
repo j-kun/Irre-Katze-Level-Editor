@@ -1569,6 +1569,10 @@ class Model(object):
             if cursor not in self.cursors:
                 self.cursors.append(cursor)
 
+        ##TODO: do I want this?
+        #if self.getLastCursor() != cursor:
+        #    self.cursors.setLast(cursor)
+
         self.onCursorMoved()
 
 
