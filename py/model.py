@@ -82,6 +82,9 @@ class CursorList(object):
     def __in__(self, cursor):
         return cursor in self._cursors
 
+    def index(self, cursor):
+        return self._cursors.index(cursor)
+
 
     def getIndicesSortedTopToBottom(self):
         return self._orderTopToBottom
@@ -127,6 +130,23 @@ class CursorList(object):
 
     def append(self, cursor):
         self.insert(len(self), cursor)
+
+    def setIndex(self, index, cursor):
+        '''same order of arguments like in insert'''
+        if index < 0:
+            index += len(self)
+
+        currentIndex = self.index(cursor)
+        if currentIndex == index:
+            return
+        
+        if index > currentIndex:
+            index -= 1
+
+        #TODO: optimize. do not update indeces lists in between.
+        del self[currentIndex]
+        self.insert(index, cursor)
+
     
 
     def remove(self, cursor):
@@ -1606,9 +1626,11 @@ class Model(object):
         self.addOrRemoveCursors(self.getFieldBelowOf)
 
     def addOrRemoveCursors(self, getNextField):
+        getPrevField = self.getGetPrevField(getNextField)
         cursor = getNextField(self.getLastCursor())
-        if len(self.cursors)>=2 and cursor in self.cursors:
-            self.removeCursors(getNextField)
+        cursorPrev = getPrevField(self.getLastCursor())
+        if len(self.cursors)>=2 and cursor in self.cursors and (cursorPrev not in self.cursors or self.cursors.index(cursor) > self.cursors.index(cursorPrev)):
+            self.removeCursors(getPrevField)
         else:
             self.addCursors(getNextField)
         self.onCursorMoved()
@@ -1621,9 +1643,11 @@ class Model(object):
             newCursor = getNextField(oldCursor)
             if newCursor not in self.cursors and self.isValidField(*newCursor):
                 self.cursors.insert(i+1, newCursor)
+            else:
+                self.cursors.setIndex(i+1, newCursor)
             i -= 1
 
-    def removeCursors(self, getNextField):
+    def getGetPrevField(self, getNextField):
         if getNextField == self.getFieldRightOf:
             getPrevField = self.getFieldLeftOf
         elif getNextField == self.getFieldBelowOf:
@@ -1634,13 +1658,25 @@ class Model(object):
             getPrevField = self.getFieldBelowOf
         else:
             assert False
+        return getPrevField
 
+    def removeCursors(self, getPrevField):
         toBeRemoved = list()
         for i in range(len(self.cursors)-1, -1, -1):
             c = self.cursors[i]
             c = getPrevField(c)
             if c not in self.cursors:
                 toBeRemoved.append(i)
+
+        if len(toBeRemoved) == 0:
+            last = self.getLastCursor()
+            if getPrevField == self.getFieldRightOf or getPrevField == self.getFieldLeftOf:
+                shallBeRemoved = lambda c: c[0] == last[0]
+            else:
+                shallBeRemoved = lambda c: c[1] == last[1]
+            for i in range(len(self.cursors)-1, -1, -1):
+                if shallBeRemoved(self.cursors[i]):
+                    toBeRemoved.append(i)
 
         for i in toBeRemoved:
             del self.cursors[i]
