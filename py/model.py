@@ -1682,6 +1682,50 @@ class Model(object):
             del self.cursors[i]
 
 
+    # select area to border (End + Control + Shift + Arrow)
+
+    def addCursorAreaTowardsLeft(self):
+        if not self.hasCursor():
+            self.cursors.append(self.CURSOR_START_FOR_LEFT)
+
+        self.addCursorArea(-1, 0)
+        
+    def addCursorAreaTowardsRight(self):
+        if not self.hasCursor():
+            self.cursors.append(self.CURSOR_START_FOR_RIGHT)
+
+        self.addCursorArea(+1, 0)
+
+    def addCursorAreaTowardsTop(self):
+        if not self.hasCursor():
+            self.cursors.append(self.CURSOR_START_FOR_UP)
+
+        self.addCursorArea(0, -1)
+
+    def addCursorAreaTowardsBottom(self):
+        if not self.hasCursor():
+            self.cursors.append(self.CURSOR_START_FOR_DOWN)
+
+        self.addCursorArea(0, +1)
+
+
+    def addCursorArea(self, dx, dy):
+        for i in range(len(self.cursors)-1, -1, -1):
+            x,y = self.cursors[i]
+            x += dx
+            y += dy
+            
+            while self.isValidField(x, y) and (x,y) not in self.cursors:
+                i += 1
+                self.cursors.insert(i, (x,y))
+                x += dx
+                y += dy
+
+        #TODO: set last cursor?
+
+        self.onCursorMoved()
+
+
     # change number of cursors
 
     def selectNone(self):
