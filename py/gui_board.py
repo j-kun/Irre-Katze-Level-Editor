@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf8 -*-
 
 import time
 
@@ -425,7 +426,7 @@ class Board(tk.Canvas):
         )
 
     def drawText(self, x, y, **kw):
-        self.canvas.create_text(
+        return self.canvas.create_text(
             self.modelToCanvasX(x) + imageOpener.FLD_SIZE/2,
             self.modelToCanvasY(y) + imageOpener.FLD_SIZE/2,
             **kw
@@ -495,6 +496,8 @@ class Board(tk.Canvas):
     def drawCursor(self):
         if self.isModeEditSolution():
             return
+
+        debugDirection = None
         if   self.debugCursor == self.DEBUG_CURSOR_OFF:
             fill = self.cursorFill
             stipple = self.cursorStipple
@@ -514,12 +517,16 @@ class Board(tk.Canvas):
             stipple    = tkc.STIPPLE_GRAY_50
             if   self.debugCursor == self.DEBUG_CURSOR_LEFT_TO_RIGHT:
                 indices = self.model.getCursors().getIndicesSortedLeftToRight()
+                debugDirection = u"→"
             elif self.debugCursor == self.DEBUG_CURSOR_RIGHT_TO_LEFT:
                 indices = self.model.getCursors().getIndicesSortedRightToLeft()
+                debugDirection = u"←"
             elif self.debugCursor == self.DEBUG_CURSOR_TOP_TO_BOTTOM:
                 indices = self.model.getCursors().getIndicesSortedTopToBottom()
+                debugDirection = u"↓"
             elif self.debugCursor == self.DEBUG_CURSOR_BOTTOM_TO_TOP:
                 indices = self.model.getCursors().getIndicesSortedBottomToTop()
+                debugDirection = u"↑"
             else:
                 assert False
         i = 0
@@ -558,6 +565,22 @@ class Board(tk.Canvas):
                     tags = (self.TAG_CURSOR),
                 )
                 i += 1
+
+        if debugDirection != None:
+            t = self.drawText(self.model.COLS, self.model.ROWS,
+                text = debugDirection,
+                font = "-weight bold",
+                fill = debugColor,
+                tags = (self.TAG_CURSOR),
+            )
+            self.canvas.create_rectangle(self.canvas.bbox(t),
+                width   = 0,
+                fill    = fill, 
+                stipple = stipple, 
+                tags    = (self.TAG_CURSOR),
+            )
+            self.canvas.lift(t)
+
 
                 
 
