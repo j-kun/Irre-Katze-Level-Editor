@@ -131,23 +131,6 @@ class CursorList(object):
     def append(self, cursor):
         self.insert(len(self), cursor)
 
-    def setIndex(self, index, cursor):
-        '''same order of arguments like in insert'''
-        if index < 0:
-            index += len(self)
-
-        currentIndex = self.index(cursor)
-        if currentIndex == index:
-            return
-        
-        if index > currentIndex:
-            index -= 1
-
-        #TODO: optimize. do not update indeces lists in between.
-        del self[currentIndex]
-        self.insert(index, cursor)
-
-    
 
     def remove(self, cursor):
         i = self._cursors.index(cursor)
@@ -1641,10 +1624,14 @@ class Model(object):
         while i >= 0:
             oldCursor = self.cursors[i]
             newCursor = getNextField(oldCursor)
-            if newCursor not in self.cursors and self.isValidField(*newCursor):
+            if newCursor not in self.cursors:
                 self.cursors.insert(i+1, newCursor)
             else:
-                self.cursors.setIndex(i+1, newCursor)
+                i1 = self.cursors.index(newCursor)
+                if i > i1:
+                    del self.cursors[i1]
+                    i -= 1
+                    self.cursors.insert(i+1, newCursor)
             i -= 1
 
     def getGetPrevField(self, getNextField):
