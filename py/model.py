@@ -63,8 +63,6 @@ class CursorList(object):
 
     def clear(self):
         self._cursors = list()
-        self._orderLeftToRight = list()
-        self._orderTopToBottom = list()
 
 
     def __str__(self):
@@ -87,16 +85,16 @@ class CursorList(object):
 
 
     def getIndicesSortedTopToBottom(self):
-        return self._orderTopToBottom
+        return sorted(range(len(self)), key=lambda i: +self._cursors[i][1])
     
     def getIndicesSortedBottomToTop(self):
-        return tuple(reversed(self._orderTopToBottom))
+        return sorted(range(len(self)), key=lambda i: -self._cursors[i][1])
 
     def getIndicesSortedLeftToRight(self):
-        return self._orderLeftToRight
+        return sorted(range(len(self)), key=lambda i: +self._cursors[i][0])
 
     def getIndicesSortedRightToLeft(self):
-        return tuple(reversed(self._orderLeftToRight))
+        return sorted(range(len(self)), key=lambda i: -self._cursors[i][0])
 
 
     # ---------- setters ----------
@@ -104,29 +102,14 @@ class CursorList(object):
     def __setitem__(self, index, cursor):
         self._cursors[index] = cursor
         
-        #self.sanityCheck()
-        
     def setLast(self, cursor):
         fromIndex = self._cursors.index(cursor)
         del self._cursors[fromIndex]
         self._cursors.append(cursor)
         
-        self._changeLastIndex(self._orderLeftToRight, fromIndex)
-        self._changeLastIndex(self._orderTopToBottom, fromIndex)
-        
-        #self.sanityCheck()
-    
 
     def insert(self, index, cursor):
         self._cursors.insert(index, cursor)
-
-        self._increaseIndices(self._orderLeftToRight, index)
-        self._increaseIndices(self._orderTopToBottom, index)
-        
-        self._insertIndex(self._orderLeftToRight, lambda c: c[0], index, cursor)
-        self._insertIndex(self._orderTopToBottom, lambda c: c[1], index, cursor)
-
-        #self.sanityCheck()
 
     def append(self, cursor):
         self.insert(len(self), cursor)
@@ -137,60 +120,10 @@ class CursorList(object):
         del self[i]
 
     def __delitem__(self, i):
-        if i < 0:
-            i += len(self)
         del self._cursors[i]
         
-        self._removeIndex(self._orderLeftToRight, i)
-        self._removeIndex(self._orderTopToBottom, i)
-
-        #self.sanityCheck()
-
     def removeLast(self):
         del self[-1]
-    
-
-    def sanityCheck(self):
-        assert len(self) == len(self._cursors) == len(self._orderLeftToRight) == len(self._orderTopToBottom)
-        l = list(range(len(self)))
-        print("cursors: {0}".format(self._cursors))
-        print("order >: {0}".format(self._orderLeftToRight))
-        print("order v: {0}".format(self._orderTopToBottom))
-        assert sorted(self._orderLeftToRight) == l
-        assert sorted(self._orderTopToBottom) == l
-
-
-    # ---------- internal ----------
-
-    @staticmethod
-    def _removeIndex(l, i):
-        l.remove(i)
-        for j in range(len(l)):
-            if l[j] >= i:
-                l[j] -= 1
-
-    def _insertIndex(self, order, cor, index, cursor):
-        '''WARNING: this function does *not* increase other indices as might be needed for inserting a new one'''
-        i = 0
-        for _i in range(len(order)):
-            i = _i
-            if cor(self._cursors[order[_i]]) >= cor(cursor):
-                break
-        else:
-            i += 1
-        order.insert(i, index)
-
-    def _increaseIndices(self, l, newIndex):
-        for i in range(len(l)):
-            if l[i] >= newIndex:
-                l[i] += 1
-
-    def _changeLastIndex(self, l, fromIndex):
-        _i = l.index(fromIndex)
-        for j in range(len(l)):
-            if l[j] >= fromIndex:
-                l[j] -= 1
-        l[_i] = len(self)-1
 
 
 
