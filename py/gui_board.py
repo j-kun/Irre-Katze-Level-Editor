@@ -138,6 +138,12 @@ class Board(tk.Canvas):
         self.canvas.bind('<Alt-Up>',    lambda e: model.swapFieldUp())
         self.canvas.bind('<Alt-Down>',  lambda e: model.swapFieldDown())
 
+        #TODO: respect isEndActive
+        self.canvas.bind('<Shift-Alt-Right>', lambda e: model.moveFieldRight())
+        self.canvas.bind('<Shift-Alt-Left>',  lambda e: model.moveFieldLeft())
+        self.canvas.bind('<Shift-Alt-Up>',    lambda e: model.moveFieldUp())
+        self.canvas.bind('<Shift-Alt-Down>',  lambda e: model.moveFieldDown())
+
         self.canvas.bind('<Control-c>' ,  lambda e: self.model.copy())
         self.canvas.bind('<Control-v>' ,  lambda e: self.model.paste(False))
         self.canvas.bind('<Control-x>' ,  lambda e: self.model.cut())

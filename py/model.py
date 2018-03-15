@@ -843,7 +843,8 @@ class Model(object):
 
     def reset(self):
         self.history.clear()
-        self.board = list(list(self.FLD_EMPTY for i in range(self.ROWS)) for i in range(self.COLS))
+        self.board     = self._createEmptyBoard()
+        self._tmpBoard = self._createEmptyBoard()
         self.bgMargin    = "irka3_1a.fld"
         self.bgUntouched = "irka3_2a.fld"
         self.bgTouched   = "irka3_3a.fld"
@@ -855,12 +856,16 @@ class Model(object):
         if self.clipboard == None:
             self.cursors = CursorList()
             self.virtualCursor = None
+            self._saveSelection()
 
         self._notificationsDisabled = False
 
         self._hasChanged = False
         self._hasChangedSinceSolutionEdit = False
         self.onChange(self.CHANGE_ALL, updateChangedFlag=False)
+
+    def _createEmptyBoard(self):
+        return list(list(self.FLD_EMPTY for i in range(self.ROWS)) for i in range(self.COLS))
 
     
     # ---------- history ----------
@@ -909,11 +914,13 @@ class Model(object):
     def onCursorMoved(self):
         self.onChange(self.CHANGE_CURSOR)
 
-    def onChange(self, change, performBackup=True, updateChangedFlag=True):
+    def onChange(self, change, performBackup=True, updateChangedFlag=True, clearTmpBoard=True):
         if self._notificationsDisabled:
             return
         if updateChangedFlag and change not in (self.CHANGE_CURSOR, self.CHANGE_HAS_CHANGED):
             self._hasChanged = True
+            if clearTmpBoard:
+                self._clearTmpBoard()
             if change in (self.CHANGE_BOARD, self.CHANGE_ALL):
                 self._hasChangedSinceSolutionEdit = True
         for listener in self.onChangeListeners:
@@ -1130,6 +1137,8 @@ class Model(object):
 
     # ---------- make changes ----------
 
+    # swap fields (Alt + Arrow)
+
     def swapFieldLeft(self):
         self._swapField(self.moveCursorLeft , index = self.cursors.getIndicesSortedLeftToRight())
     
@@ -1153,6 +1162,66 @@ class Model(object):
             self.setField(*self.cursors[index[i]], value=toBeMoved)
         self.enableNotifications()
         self.onChange(self.CHANGE_BOARD)
+
+
+    # move fields (Shift + Alt + Arrow)
+
+    def moveFieldLeft(self):
+        self._moveField(self.getFieldLeftOf)
+    
+    def moveFieldRight(self):
+        self._moveField(self.getFieldRightOf)
+    
+    def moveFieldUp(self):
+        self._moveField(self.getFieldAboveOf)
+    
+    def moveFieldDown(self):
+        self._moveField(self.getFieldBelowOf)
+    
+
+    def _moveField(self, getNextField):
+        if not self.hasCursor():
+            return
+
+        if self._hasSelectionChanged():
+            self._clearTmpBoard()
+
+        selectedValues = list()
+        for c in self.cursors:
+            selectedValues.append(self.getField(*c))
+
+        for x in range(0, self.COLS):
+            for y in range(0, self.ROWS):
+                if (x,y) not in self.cursors:
+                    self._tmpBoard[x][y] = self.board[x][y]
+
+        newCursors = CursorList()
+        for c,v in zip(self.cursors, selectedValues):
+            x,y = getNextField(c)
+            self.board[x][y] = v
+            newCursors.append((x,y))
+        self.cursors = newCursors
+
+        for x in range(0, self.COLS):
+            for y in range(0, self.ROWS):
+                if (x,y) not in self.cursors:
+                    self.board[x][y] = self._tmpBoard[x][y]
+
+        self._saveSelection()
+
+        self.onChange(self.CHANGE_BOARD, clearTmpBoard=False)
+
+
+    def _clearTmpBoard(self):
+        self._tmpBoard = self._createEmptyBoard()
+
+    def _saveSelection(self):
+        self._tmpCursors = tuple(self.cursors)
+
+    def _hasSelectionChanged(self):
+        return len(self._tmpCursors) != len(self.cursors) \
+            or not all(c0 == c1 for c0, c1 in zip(self._tmpCursors, self.cursors))
+
 
 
     # ---------- background ----------
