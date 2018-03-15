@@ -133,10 +133,10 @@ class Board(tk.Canvas):
         self.canvas.bind('<Key>' ,  self.onKeyListener)
         
         #TODO: respect isEndActive
-        self.canvas.bind('<Alt-Right>', lambda e: model.moveFieldRight())
-        self.canvas.bind('<Alt-Left>', lambda e: model.moveFieldLeft())
-        self.canvas.bind('<Alt-Up>', lambda e: model.moveFieldUp())
-        self.canvas.bind('<Alt-Down>', lambda e: model.moveFieldDown())
+        self.canvas.bind('<Alt-Right>', lambda e: model.swapFieldRight())
+        self.canvas.bind('<Alt-Left>',  lambda e: model.swapFieldLeft())
+        self.canvas.bind('<Alt-Up>',    lambda e: model.swapFieldUp())
+        self.canvas.bind('<Alt-Down>',  lambda e: model.swapFieldDown())
 
         self.canvas.bind('<Control-c>' ,  lambda e: self.model.copy())
         self.canvas.bind('<Control-v>' ,  lambda e: self.model.paste(False))

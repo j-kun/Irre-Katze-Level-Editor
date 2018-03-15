@@ -1130,19 +1130,19 @@ class Model(object):
 
     # ---------- make changes ----------
 
-    def moveFieldLeft(self):
-        self._moveField(self.moveCursorLeft , index = self.cursors.getIndicesSortedLeftToRight())
+    def swapFieldLeft(self):
+        self._swapField(self.moveCursorLeft , index = self.cursors.getIndicesSortedLeftToRight())
     
-    def moveFieldRight(self):
-        self._moveField(self.moveCursorRight, index = self.cursors.getIndicesSortedRightToLeft())
+    def swapFieldRight(self):
+        self._swapField(self.moveCursorRight, index = self.cursors.getIndicesSortedRightToLeft())
     
-    def moveFieldUp(self):
-        self._moveField(self.moveCursorUp   , index = self.cursors.getIndicesSortedTopToBottom())
+    def swapFieldUp(self):
+        self._swapField(self.moveCursorUp   , index = self.cursors.getIndicesSortedTopToBottom())
     
-    def moveFieldDown(self):
-        self._moveField(self.moveCursorDown , index = self.cursors.getIndicesSortedBottomToTop())
+    def swapFieldDown(self):
+        self._swapField(self.moveCursorDown , index = self.cursors.getIndicesSortedBottomToTop())
     
-    def _moveField(self, moveCursor, index):
+    def _swapField(self, moveCursor, index):
         self.disableNotifications()
         oldCursors = list(self.cursors)
         moveCursor()
