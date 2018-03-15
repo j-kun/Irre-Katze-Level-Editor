@@ -1140,26 +1140,27 @@ class Model(object):
     # swap fields (Alt + Arrow)
 
     def swapFieldLeft(self):
-        self._swapField(self.moveCursorLeft , index = self.cursors.getIndicesSortedLeftToRight())
+        self._swapField(self.moveCursorLeft , self.cursors.getIndicesSortedLeftToRight())
     
     def swapFieldRight(self):
-        self._swapField(self.moveCursorRight, index = self.cursors.getIndicesSortedRightToLeft())
+        self._swapField(self.moveCursorRight, self.cursors.getIndicesSortedRightToLeft())
     
     def swapFieldUp(self):
-        self._swapField(self.moveCursorUp   , index = self.cursors.getIndicesSortedTopToBottom())
+        self._swapField(self.moveCursorUp   , self.cursors.getIndicesSortedTopToBottom())
     
     def swapFieldDown(self):
-        self._swapField(self.moveCursorDown , index = self.cursors.getIndicesSortedBottomToTop())
+        self._swapField(self.moveCursorDown , self.cursors.getIndicesSortedBottomToTop())
     
-    def _swapField(self, moveCursor, index):
+    def _swapField(self, moveCursor, indices):
         self.disableNotifications()
         oldCursors = list(self.cursors)
         moveCursor()
-        for i in range(len(self.cursors)):
-            toBeMoved = self.getField(*oldCursors[index[i]])
-            tmp = self.getField(*self.cursors[index[i]])
-            self.setField(*oldCursors[index[i]], value=tmp)
-            self.setField(*self.cursors[index[i]], value=toBeMoved)
+        for i in indices:
+            toBeMoved = self.getField(*oldCursors[i])
+            tmp = self.getField(*self.cursors[i])
+            self.setField(*oldCursors[i], value=tmp)
+            self.setField(*self.cursors[i], value=toBeMoved)
+
         self.enableNotifications()
         self.onChange(self.CHANGE_BOARD)
 
