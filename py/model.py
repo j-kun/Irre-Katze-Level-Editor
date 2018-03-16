@@ -84,19 +84,6 @@ class CursorList(object):
         return self._cursors.index(cursor)
 
 
-    def getIndicesSortedTopToBottom(self):
-        return sorted(range(len(self)), key=lambda i: +self._cursors[i][1])
-    
-    def getIndicesSortedBottomToTop(self):
-        return sorted(range(len(self)), key=lambda i: -self._cursors[i][1])
-
-    def getIndicesSortedLeftToRight(self):
-        return sorted(range(len(self)), key=lambda i: +self._cursors[i][0])
-
-    def getIndicesSortedRightToLeft(self):
-        return sorted(range(len(self)), key=lambda i: -self._cursors[i][0])
-
-
     # ---------- setters ----------
 
     def __setitem__(self, index, cursor):
@@ -1140,29 +1127,90 @@ class Model(object):
     # swap fields (Alt + Arrow)
 
     def swapFieldLeft(self):
-        self._swapField(self.moveCursorLeft , self.cursors.getIndicesSortedLeftToRight())
+        self._swapField(self.getFieldLeftOf , self.getCursorsForSwapLeft())
     
     def swapFieldRight(self):
-        self._swapField(self.moveCursorRight, self.cursors.getIndicesSortedRightToLeft())
+        self._swapField(self.getFieldRightOf, self.getCursorsForSwapRight())
     
     def swapFieldUp(self):
-        self._swapField(self.moveCursorUp   , self.cursors.getIndicesSortedTopToBottom())
+        self._swapField(self.getFieldAboveOf, self.getCursorsForSwapUp())
     
     def swapFieldDown(self):
-        self._swapField(self.moveCursorDown , self.cursors.getIndicesSortedBottomToTop())
+        self._swapField(self.getFieldBelowOf, self.getCursorsForSwapDown())
     
-    def _swapField(self, moveCursor, indices):
+    def _swapField(self, getNextField, cursors):
         self.disableNotifications()
-        oldCursors = list(self.cursors)
-        moveCursor()
-        for i in indices:
-            toBeMoved = self.getField(*oldCursors[i])
-            tmp = self.getField(*self.cursors[i])
-            self.setField(*oldCursors[i], value=tmp)
-            self.setField(*self.cursors[i], value=toBeMoved)
+
+        cursors = tuple(cursors)
+        self.moveCursor(getNextField)
+
+        for c in cursors:
+            n = getNextField(c)
+            toBeMoved = self.getField(*c)
+            tmp = self.getField(*n)
+            self.setField(*c, value=tmp)
+            self.setField(*n, value=toBeMoved)
 
         self.enableNotifications()
         self.onChange(self.CHANGE_BOARD)
+
+
+    def getCursorsForSwapLeft(self):
+        return self._getCursorsForSwap(
+            getPrevField = self.getFieldRightOf,
+            direction = -1,
+            xy = lambda c0, c1: (c0, c1),
+        )
+            
+    def getCursorsForSwapRight(self):
+        return self._getCursorsForSwap(
+            getPrevField = self.getFieldLeftOf,
+            direction = +1,
+            xy = lambda c0, c1: (c0, c1),
+        )
+            
+    def getCursorsForSwapUp(self):
+        return self._getCursorsForSwap(
+            getPrevField = self.getFieldBelowOf,
+            direction = -1,
+            xy = lambda c0, c1: (c1, c0),
+        )
+            
+    def getCursorsForSwapDown(self):
+        return self._getCursorsForSwap(
+            getPrevField = self.getFieldAboveOf,
+            direction = +1,
+            xy = lambda c0, c1: (c1, c0),
+        )
+            
+
+    def _getCursorsForSwap(self, getPrevField, direction, xy):
+        size0, size1 = xy(self.COLS, self.ROWS)
+        if direction < 0:
+            line = range(size0-1)
+        else:
+            line = range(size0-2, -1, -1)
+
+        for c1 in range(size1):
+            c0 = 0
+            while xy(c0,c1) in self.cursors:
+                c0 += 1
+                if c0 >= size0:
+                    break
+            else:
+                # (x,y) is *not* a cursor
+                startField = xy(c0,c1)
+                n = getPrevField(startField)
+                while n != startField:
+                    if n in self.cursors:
+                        yield n
+                    n = getPrevField(n)
+                
+                continue
+
+            # entire row is selected
+            for c0 in line:
+                yield xy(c0,c1)
 
 
     # move fields (Shift + Alt + Arrow)

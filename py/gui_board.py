@@ -522,16 +522,16 @@ class Board(tk.Canvas):
             debugColor = 'red'
             stipple    = tkc.STIPPLE_GRAY_50
             if   self.debugCursor == self.DEBUG_CURSOR_LEFT_TO_RIGHT:
-                indices = self.model.getCursors().getIndicesSortedLeftToRight()
+                indices = tuple(self.model.cursors.index(c) for c in self.model.getCursorsForSwapRight())
                 debugDirection = u"→"
             elif self.debugCursor == self.DEBUG_CURSOR_RIGHT_TO_LEFT:
-                indices = self.model.getCursors().getIndicesSortedRightToLeft()
+                indices = tuple(self.model.cursors.index(c) for c in self.model.getCursorsForSwapLeft())
                 debugDirection = u"←"
             elif self.debugCursor == self.DEBUG_CURSOR_TOP_TO_BOTTOM:
-                indices = self.model.getCursors().getIndicesSortedTopToBottom()
+                indices = tuple(self.model.cursors.index(c) for c in self.model.getCursorsForSwapDown())
                 debugDirection = u"↓"
             elif self.debugCursor == self.DEBUG_CURSOR_BOTTOM_TO_TOP:
-                indices = self.model.getCursors().getIndicesSortedBottomToTop()
+                indices = tuple(self.model.cursors.index(c) for c in self.model.getCursorsForSwapUp())
                 debugDirection = u"↑"
             else:
                 assert False
@@ -546,7 +546,7 @@ class Board(tk.Canvas):
             )
             if self.debugCursor:
                 self.drawText(x, y,
-                    text = str(indices.index(i)),
+                    text = str(indices.index(i)) if i in indices else "",
                     font = "-weight bold",
                     fill = debugColor,
                     tags = (self.TAG_CURSOR),
