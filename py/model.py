@@ -1632,6 +1632,9 @@ class Model(object):
     # select area
 
     def addOrRemoveCursorsLeft(self):
+        if self.hasVirtualCursor():
+            self.newCursorEnd()
+
         if not self.hasCursor():
             self.moveCursorToStartForLeft()
             return
@@ -1639,6 +1642,9 @@ class Model(object):
         self.addOrRemoveCursors(self.getFieldLeftOf)
 
     def addOrRemoveCursorsRight(self):
+        if self.hasVirtualCursor():
+            self.newCursorEnd()
+
         if not self.hasCursor():
             self.moveCursorToStartForRight()
             return
@@ -1646,6 +1652,9 @@ class Model(object):
         self.addOrRemoveCursors(self.getFieldRightOf)
 
     def addOrRemoveCursorsAbove(self):
+        if self.hasVirtualCursor():
+            self.newCursorEnd()
+
         if not self.hasCursor():
             self.moveCursorToStartForUp()
             return
@@ -1653,6 +1662,9 @@ class Model(object):
         self.addOrRemoveCursors(self.getFieldAboveOf)
 
     def addOrRemoveCursorsBelow(self):
+        if self.hasVirtualCursor():
+            self.newCursorEnd()
+
         if not self.hasCursor():
             self.moveCursorToStartForDown()
             return
@@ -1827,7 +1839,7 @@ class Model(object):
     def newCursorBegin(self):
         pass
 
-    def newCursorEnd(self):
+    def newCursorApply(self):
         if self.virtualCursor == None:
             return
 
@@ -1845,6 +1857,9 @@ class Model(object):
         self.virtualCursor = None
         self.onCursorMoved()
         return True
+
+    #TODO: setting
+    newCursorEnd = newCursorCancel
 
 
     def newCursorRight(self):

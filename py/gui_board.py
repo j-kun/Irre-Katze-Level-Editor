@@ -93,9 +93,9 @@ class Board(tk.Canvas):
         self.canvas.bind('<Down>' , lambda e: model.moveCursorDown()  if not self.isEndActive else model.moveCursorToBottom())
         
         self.canvas.bind('<KeyPress-Control_L>', lambda e:   model.newCursorBegin())
-        self.canvas.bind('<KeyRelease-Control_L>', lambda e: model.newCursorEnd())
+        self.canvas.bind('<KeyRelease-Control_L>', lambda e: model.newCursorApply())
         self.canvas.bind('<KeyPress-Control_R>', lambda e:   model.newCursorBegin())
-        self.canvas.bind('<KeyRelease-Control_R>', lambda e: model.newCursorEnd())
+        self.canvas.bind('<KeyRelease-Control_R>', lambda e: model.newCursorApply())
         self.canvas.bind('<Control-Right>', lambda e: model.newCursorRight() if not self.isEndActive else model.newCursorToRight())
         self.canvas.bind('<Control-Left>' , lambda e: model.newCursorLeft()  if not self.isEndActive else model.newCursorToLeft())
         self.canvas.bind('<Control-Up>'   , lambda e: model.newCursorAbove() if not self.isEndActive else model.newCursorToTop())
