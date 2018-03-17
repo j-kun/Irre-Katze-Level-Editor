@@ -1092,6 +1092,38 @@ class Model(object):
             l.append(e)
 
 
+    # ---------- coordinates ----------
+
+    def getFieldRightOf(self, cursor):
+        x, y = cursor
+        x += 1
+        if x >= self.COLS:
+            x = 0
+        return x, y
+
+    def getFieldLeftOf(self, cursor):
+        x, y = cursor
+        x -= 1
+        if x < 0:
+            x += self.COLS
+        return x, y
+
+    def getFieldBelowOf(self, cursor):
+        x, y = cursor
+        y += 1
+        if y >= self.ROWS:
+            y = 0
+        return x, y
+
+    def getFieldAboveOf(self, cursor):
+        x, y = cursor
+        y -= 1
+        if y < 0:
+            y += self.ROWS
+        return x, y
+
+    
+
     # ---------- clipboard ----------
 
     def copy(self):
@@ -1328,6 +1360,8 @@ class Model(object):
 
     # ---------- cursor ----------
 
+    # getters
+
     def getCursors(self):
         return self.cursors
 
@@ -1344,145 +1378,7 @@ class Model(object):
         return len(self.cursors) > 0
     
 
-    def moveCursorToField(self, fld):
-        out = False
-        for x, y in self.findAll(fld):
-            self.setCursor(x, y)
-            out = True
-        return out
-    
-
-    # move to border
-
-    CURSOR_START_FOR_RIGHT = (0, 0)
-    CURSOR_START_FOR_DOWN  = (0, 0)
-    CURSOR_START_FOR_LEFT  = (COLS-1, ROWS-1)
-    CURSOR_START_FOR_UP    = (COLS-1, ROWS-1)
-    COR_CENTER             = ((COLS-1)//2, (ROWS-1)//2)
-
-    def moveCursorToStartForLeft(self):
-        assert self.setCursor(*self.CURSOR_START_FOR_LEFT)
-        self.onCursorMoved()
-
-    def moveCursorToStartForRight(self):
-        assert self.setCursor(*self.CURSOR_START_FOR_RIGHT)
-        self.onCursorMoved()
-
-    def moveCursorToStartForUp(self):
-        assert self.setCursor(*self.CURSOR_START_FOR_UP)
-        self.onCursorMoved()
-
-    def moveCursorToStartForDown(self):
-        assert self.setCursor(*self.CURSOR_START_FOR_DOWN)
-        self.onCursorMoved()
-
-    def moveCursorToCenter(self):
-        assert self.setCursor(*self.COR_CENTER)
-        self.onCursorMoved()
-
-
-    def moveCursorToLeft(self):
-        if not self.hasCursor():
-            self.cursors.append(self.CURSOR_START_FOR_LEFT)
-        dx = - min(self.cursors, key=lambda p: p[0])[0]
-        self._moveCursors(dx, 0)
-
-    def moveCursorToRight(self):
-        if not self.hasCursor():
-            self.cursors.append(self.CURSOR_START_FOR_RIGHT)
-        dx = self.COLS - 1 - max(self.cursors, key=lambda p: p[0])[0]
-        self._moveCursors(dx, 0)
-    
-    def moveCursorToTop(self):
-        if not self.hasCursor():
-            self.cursors.append(self.CURSOR_START_FOR_UP)
-        dy = - min(self.cursors, key=lambda p: p[1])[1]
-        self._moveCursors(0, dy)
-
-    def moveCursorToBottom(self):
-        if not self.hasCursor():
-            self.cursors.append(self.CURSOR_START_FOR_DOWN)
-        dy = self.ROWS - 1 - max(self.cursors, key=lambda p: p[1])[1]
-        self._moveCursors(0, dy)
-
-    def _moveCursors(self, dx, dy):
-        '''WARNING: this function does not check for borders'''
-        for i in range(len(self.cursors)):
-            x, y = self.cursors[i]
-            x += dx
-            y += dy
-            self.cursors[i] = (x, y)
-        self.onCursorMoved()
-        
-
-    # move one field
-    
-    def moveCursorRight(self):
-        if not self.hasCursor():
-            self.moveCursorToStartForRight()
-            return
-
-        self.moveCursor(self.getFieldRightOf)
-
-    def moveCursorLeft(self):
-        if not self.hasCursor():
-            self.moveCursorToStartForLeft()
-            return
-
-        self.moveCursor(self.getFieldLeftOf)
-
-    def moveCursorDown(self):
-        if not self.hasCursor():
-            self.moveCursorToStartForDown()
-            return
-
-        self.moveCursor(self.getFieldBelowOf)
-
-    def moveCursorUp(self):
-        if not self.hasCursor():
-            self.moveCursorToStartForUp()
-            return
-
-        self.moveCursor(self.getFieldAboveOf)
-
-
-    def moveCursor(self, getNextField):
-        for i in range(len(self.cursors)):
-            self.cursors[i] = getNextField(self.cursors[i])
-
-        self.onCursorMoved()
-
-
-    def getFieldRightOf(self, cursor):
-        x, y = cursor
-        x += 1
-        if x >= self.COLS:
-            x = 0
-        return x, y
-
-    def getFieldLeftOf(self, cursor):
-        x, y = cursor
-        x -= 1
-        if x < 0:
-            x += self.COLS
-        return x, y
-
-    def getFieldBelowOf(self, cursor):
-        x, y = cursor
-        y += 1
-        if y >= self.ROWS:
-            y = 0
-        return x, y
-
-    def getFieldAboveOf(self, cursor):
-        x, y = cursor
-        y -= 1
-        if y < 0:
-            y += self.ROWS
-        return x, y
-
-    
-    # explicit coordinates
+    # explicit coordinates (Mouse Click)
 
     def setCursor(self, x, y):
         if not self.isValidField(x, y):
@@ -1529,9 +1425,156 @@ class Model(object):
             self.cursors.append((x, y))
         self.onCursorMoved()
         return True
+
+
+
+    # start fields
+
+    CURSOR_START_FOR_RIGHT = (0, 0)
+    CURSOR_START_FOR_DOWN  = (0, 0)
+    CURSOR_START_FOR_LEFT  = (COLS-1, ROWS-1)
+    CURSOR_START_FOR_UP    = (COLS-1, ROWS-1)
+    COR_CENTER             = ((COLS-1)//2, (ROWS-1)//2)
+
+    def moveCursorToStartForLeft(self):
+        assert self.setCursor(*self.CURSOR_START_FOR_LEFT)
+        self.onCursorMoved()
+
+    def moveCursorToStartForRight(self):
+        assert self.setCursor(*self.CURSOR_START_FOR_RIGHT)
+        self.onCursorMoved()
+
+    def moveCursorToStartForUp(self):
+        assert self.setCursor(*self.CURSOR_START_FOR_UP)
+        self.onCursorMoved()
+
+    def moveCursorToStartForDown(self):
+        assert self.setCursor(*self.CURSOR_START_FOR_DOWN)
+        self.onCursorMoved()
+
+    def moveCursorToCenter(self):
+        assert self.setCursor(*self.COR_CENTER)
+        self.onCursorMoved()
     
 
-    # select range
+    # select object
+
+    def moveCursorToField(self, fld):
+        out = False
+        for x, y in self.findAll(fld):
+            self.setCursor(x, y)
+            out = True
+        return out
+
+
+    # change number of cursors
+
+    def selectNone(self):
+        if len(self.cursors) == 0:
+            return False
+        self.cursors.clear()
+        self.onCursorMoved()
+        return True
+
+    def selectOne(self):
+        if len(self.cursors) <= 1:
+            return False
+        cursor = self.cursors[-1]
+        self.cursors.clear()
+        self.cursors.append(cursor)
+        self.onCursorMoved()
+        return True
+
+    def selectAll(self):
+        self.cursors.clear()
+        for x in range(self.COLS):
+            for y in range(self.ROWS):
+                self.cursors.append((x, y))
+        self.onCursorMoved()
+
+    def removeLastCursor(self):
+        if len(self.cursors) == 0:
+            return False
+        self.cursors.removeLast()
+        self.onCursorMoved()
+        return True
+
+
+    # move cursors by one field (Arrow without modifiers)
+    
+    def moveCursorRight(self):
+        if not self.hasCursor():
+            self.moveCursorToStartForRight()
+            return
+
+        self.moveCursor(self.getFieldRightOf)
+
+    def moveCursorLeft(self):
+        if not self.hasCursor():
+            self.moveCursorToStartForLeft()
+            return
+
+        self.moveCursor(self.getFieldLeftOf)
+
+    def moveCursorDown(self):
+        if not self.hasCursor():
+            self.moveCursorToStartForDown()
+            return
+
+        self.moveCursor(self.getFieldBelowOf)
+
+    def moveCursorUp(self):
+        if not self.hasCursor():
+            self.moveCursorToStartForUp()
+            return
+
+        self.moveCursor(self.getFieldAboveOf)
+
+
+    def moveCursor(self, getNextField):
+        for i in range(len(self.cursors)):
+            self.cursors[i] = getNextField(self.cursors[i])
+
+        self.onCursorMoved()
+
+
+    # move cursors to border (End + Arrow)
+
+    def moveCursorToLeft(self):
+        if not self.hasCursor():
+            self.cursors.append(self.CURSOR_START_FOR_LEFT)
+        dx = - min(self.cursors, key=lambda p: p[0])[0]
+        self._moveCursors(dx, 0)
+
+    def moveCursorToRight(self):
+        if not self.hasCursor():
+            self.cursors.append(self.CURSOR_START_FOR_RIGHT)
+        dx = self.COLS - 1 - max(self.cursors, key=lambda p: p[0])[0]
+        self._moveCursors(dx, 0)
+    
+    def moveCursorToTop(self):
+        if not self.hasCursor():
+            self.cursors.append(self.CURSOR_START_FOR_UP)
+        dy = - min(self.cursors, key=lambda p: p[1])[1]
+        self._moveCursors(0, dy)
+
+    def moveCursorToBottom(self):
+        if not self.hasCursor():
+            self.cursors.append(self.CURSOR_START_FOR_DOWN)
+        dy = self.ROWS - 1 - max(self.cursors, key=lambda p: p[1])[1]
+        self._moveCursors(0, dy)
+
+    def _moveCursors(self, dx, dy):
+        '''WARNING: this function does not check for borders'''
+        for i in range(len(self.cursors)):
+            x, y = self.cursors[i]
+            x += dx
+            y += dy
+            self.cursors[i] = (x, y)
+        self.onCursorMoved()
+        
+
+    # select range (Shift + Arrow)
 
     def addOrRemoveCursorLeft(self):
         if not self.hasCursor():
@@ -1583,7 +1626,7 @@ class Model(object):
         self.onCursorMoved()
 
 
-    # select range to border
+    # select range to border (End + Shift + Arrow)
 
     def addCursorsTowardsLeft(self):
         if not self.hasCursor():
@@ -1629,7 +1672,7 @@ class Model(object):
         self.onCursorMoved()
 
 
-    # select area
+    # select area (Control + Shift + Arrow)
 
     def addOrRemoveCursorsLeft(self):
         if self.hasVirtualCursor():
@@ -1794,40 +1837,7 @@ class Model(object):
         self.onCursorMoved()
 
 
-    # change number of cursors
-
-    def selectNone(self):
-        if len(self.cursors) == 0:
-            return False
-        self.cursors.clear()
-        self.onCursorMoved()
-        return True
-
-    def selectOne(self):
-        if len(self.cursors) <= 1:
-            return False
-        cursor = self.cursors[-1]
-        self.cursors.clear()
-        self.cursors.append(cursor)
-        self.onCursorMoved()
-        return True
-
-    def selectAll(self):
-        self.cursors.clear()
-        for x in range(self.COLS):
-            for y in range(self.ROWS):
-                self.cursors.append((x, y))
-        self.onCursorMoved()
-
-    def removeLastCursor(self):
-        if len(self.cursors) == 0:
-            return False
-        self.cursors.removeLast()
-        self.onCursorMoved()
-        return True
-    
-
-    # new cursor / virtual cursor
+    # new cursor / virtual cursor (Control + Arrow)
 
     def hasVirtualCursor(self):
         return self.virtualCursor != None
@@ -1911,7 +1921,7 @@ class Model(object):
         self.onCursorMoved()
 
 
-    # new cursor / virtual cursor to border
+    # new cursor / virtual cursor to border (End + Control + Arrow)
 
     def newCursorToRight(self):
         if self.virtualCursor == None:
@@ -1952,6 +1962,7 @@ class Model(object):
 
         self.virtualCursor = (self.virtualCursor[0], 0)
         self.onCursorMoved()
+
 
 
     # ---------- input & output ----------
