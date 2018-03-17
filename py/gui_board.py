@@ -116,7 +116,8 @@ class Board(tk.Canvas):
         self.canvas.bind('<End>', self.onEndPress)
         
         self.canvas.bind('<Button-1>', self.onClick)
-        self.canvas.bind('<Escape>' , lambda e: model.newCursorCancel() or model.selectOne() or model.selectNone())
+        self.canvas.bind('<Escape>',       lambda e: model.newCursorCancel() or model.selectLast()  or model.selectNone())
+        self.canvas.bind('<Shift-Escape>', lambda e: model.newCursorCancel() or model.selectFirst() or model.selectNone())
         self.canvas.bind('<Control-a>' , lambda e: model.selectAll())
 
         self.canvas.bindToKey('F1' , lambda key: self.setViewObjectCode(self.OBJECT_CODE_CHAR),   lambda key: self.setViewObjectCode(self.OBJECT_CODE_OFF))

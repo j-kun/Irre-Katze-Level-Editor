@@ -1476,7 +1476,16 @@ class Model(object):
         self.onCursorMoved()
         return True
 
-    def selectOne(self):
+    def selectFirst(self):
+        if len(self.cursors) <= 1:
+            return False
+        cursor = self.cursors[0]
+        self.cursors.clear()
+        self.cursors.append(cursor)
+        self.onCursorMoved()
+        return True
+
+    def selectLast(self):
         if len(self.cursors) <= 1:
             return False
         cursor = self.cursors[-1]
