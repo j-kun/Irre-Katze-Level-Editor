@@ -1672,18 +1672,36 @@ class Model(object):
 
     def addCursors(self, getNextField):
         i = len(self.cursors) - 1
+        hasChanged = False
         while i >= 0:
             oldCursor = self.cursors[i]
             newCursor = getNextField(oldCursor)
-            if newCursor not in self.cursors:
-                self.cursors.insert(i+1, newCursor)
-            else:
+
+            while newCursor in self.cursors:
                 i1 = self.cursors.index(newCursor)
-                if i > i1:
+                if i1 < i:
                     del self.cursors[i1]
-                    i -= 1
-                    self.cursors.insert(i+1, newCursor)
+                    self.cursors.insert(i, newCursor)
+
+                    if newCursor == oldCursor:
+                        break
+                    newCursor = getNextField(newCursor)
+                else:
+                    break
+
+            else:
+                self.cursors.insert(i+1, newCursor)
+                hasChanged = True
+
             i -= 1
+
+        if not hasChanged:
+            oldCursor = self.cursors[-1]
+            newCursor = getNextField(oldCursor)
+            i1 = self.cursors.index(newCursor)
+            del self.cursors[i1]
+            self.cursors.append(newCursor)
+
 
     def getGetPrevField(self, getNextField):
         if getNextField == self.getFieldRightOf:
