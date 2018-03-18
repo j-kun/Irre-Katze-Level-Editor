@@ -56,12 +56,14 @@ class KEY:
     COLOR_BG          = 'color-background'
     COLOR_BG_SELECTED = 'color-background-selected'
     COLOR_BG_ACTIVE   = 'color-background-active'
+    COLOR_BG_ENTRY    = 'color-background-entry'
 
     COLOR_HIGHLIGHT   = 'color-border-highlight'
 
     COLOR_TEXT          = 'color-text'
     COLOR_TEXT_SELECTED = 'color-text-selected'
     COLOR_TEXT_ACTIVE   = 'color-text-active'
+    COLOR_TEXT_ENTRY    = 'color-text-entry'
     COLOR_TEXT_SUCCESS  = 'color-text-log-success'
     COLOR_TEXT_WARNING  = 'color-text-log-warning'
     COLOR_TEXT_ERROR    = 'color-text-log-error'
@@ -245,12 +247,14 @@ class MainWindow(tk.Tk):
         settings.setdefault(KEY.COLOR_BG,          None)
         settings.setdefault(KEY.COLOR_BG_SELECTED, None)
         settings.setdefault(KEY.COLOR_BG_ACTIVE,   None)
+        settings.setdefault(KEY.COLOR_BG_ENTRY,    None)
 
         settings.setdefault(KEY.COLOR_HIGHLIGHT,   None)
 
         settings.setdefault(KEY.COLOR_TEXT,          None)
         settings.setdefault(KEY.COLOR_TEXT_SELECTED, None)
         settings.setdefault(KEY.COLOR_TEXT_ACTIVE,   None)
+        settings.setdefault(KEY.COLOR_TEXT_ENTRY,    None)
         settings.setdefault(KEY.COLOR_TEXT_SUCCESS,  'green')
         settings.setdefault(KEY.COLOR_TEXT_WARNING,  'orange')
         settings.setdefault(KEY.COLOR_TEXT_ERROR,    'red')
@@ -266,9 +270,11 @@ class MainWindow(tk.Tk):
         bg         = settings[KEY.COLOR_BG]
         bgSelected = settings[KEY.COLOR_BG_SELECTED]
         bgActive   = settings[KEY.COLOR_BG_ACTIVE]
+        bgEntry    = settings[KEY.COLOR_BG_ENTRY]
         text         = settings[KEY.COLOR_TEXT]
         textSelected = settings[KEY.COLOR_TEXT_SELECTED]
         textActive   = settings[KEY.COLOR_TEXT_ACTIVE]
+        textEntry    = settings[KEY.COLOR_TEXT_ENTRY]
         textSuccess  = settings[KEY.COLOR_TEXT_SUCCESS]
         textWarning  = settings[KEY.COLOR_TEXT_WARNING]
         textError    = settings[KEY.COLOR_TEXT_ERROR]
@@ -343,6 +349,20 @@ class MainWindow(tk.Tk):
                 fgs.append(('active', textActive))
 
             noteStyler.map('TNotebook.Tab', background=bgs, foreground=fgs)
+
+
+        if bgEntry != None:
+            self.textNotes.config(bg = bgEntry)
+            self.board.setCommandlineBackgroundColor(bgEntry)
+
+        if textEntry != None:
+            #insertbackground: cursor color
+            self.textNotes.config(fg = textEntry, insertbackground = textEntry)
+            self.board.setCommandlineTextColorNormal(textEntry)
+
+        if textError != None:
+            self.board.setCommandlineTextColorError(textError)
+
 
     def configAll(self, widget, kw):
         try:

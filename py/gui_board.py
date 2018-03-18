@@ -69,6 +69,10 @@ class Board(tk.Canvas):
         self._mode = self.MODE_EDIT_LEVEL
         self._last_cmd = None
         self.isEndActive = False
+
+        self.setCommandlineBackgroundColor(None)
+        self.setCommandlineTextColorNormal('black')
+        self.setCommandlineTextColorError('red')
         
         self.canvas = self
         self.canvas.bindToKey = tkx.KeyBinder(self.canvas)
@@ -170,6 +174,13 @@ class Board(tk.Canvas):
         bbox[0] = int(x0)
         bbox[2] = int(x1)
         self.configure(scrollregion=bbox)
+
+    def setCommandlineBackgroundColor(self, color):
+        self.colorBackground = color
+    def setCommandlineTextColorNormal(self, color):
+        self.colorTextNormal = color
+    def setCommandlineTextColorError(self, color):
+        self.colorTextError  = color
 
 
     # ---------- modes ----------
@@ -303,12 +314,13 @@ class Board(tk.Canvas):
             x = self.winfo_width() / 2
             y = self.winfo_height() / 2
             width = len(self.CODE_SET_AUTHOR) + 20
-        self.entry = tkx.Entry(self, width=width)
+        #insertbackground: cursor color
+        self.entry = tkx.Entry(self, width=width, bg=self.colorBackground, insertbackground=self.colorTextNormal)
         self.entry.place(x=x, y=y, anchor=tk.CENTER)
         self.entry.focus_set()
         self.entry.bind('<Return>', self.enterNewObjectDone)
         self.entry.bind('<Escape>', self.enterNewObjectCancel)
-        self.entry.bind('<Key>', lambda e: self.entry.configure(fg='black'), '+')
+        self.entry.bind('<Key>', lambda e: self.entry.configure(fg=self.colorTextNormal), '+')
         def onKey(e):
             #print("char: {e.char}, keycode: {e.keycode}, keysym: {e.keysym}, keysym_num: {e.keysym_num}, state: {e.state}, type: {e.type}".format(e=e))
             if e.keycode in tkc.KEYCODES_ARROWS:
@@ -381,7 +393,7 @@ class Board(tk.Canvas):
         self.enterNewObjectCancel()
 
     def enterNewObjectError(self):
-        self.entry.configure(fg='red')
+        self.entry.configure(fg=self.colorTextError)
 
     def enterNewObjectCancel(self, event=None):
         self.entry.place_forget()
