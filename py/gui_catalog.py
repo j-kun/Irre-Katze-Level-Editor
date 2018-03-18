@@ -10,13 +10,13 @@ import gui_image_opener as imageOpener
 
 class CatalogItem(tk.Canvas):
 
-    PAD_X = 1
+    PAD_X = 3
     PAD_Y = PAD_X
     
     DISTANCE_BASELINE = 18
     
     def __init__(self, catalog, name, imageOpener):
-        tk.Canvas.__init__(self, master=catalog)
+        tk.Canvas.__init__(self, master=catalog, highlightthickness=0)
         self.catalog = catalog
         self.imageOpener = imageOpener
         self.name = name
@@ -35,6 +35,16 @@ class CatalogItem(tk.Canvas):
         self.configure( width=bbox[2]-bbox[0], height=bbox[3]-bbox[1], scrollregion=bbox )
         tkx.add_tooltip(self)
         tkx.set_text(self.tooltip, self.longName)
+
+    def config(self, arg=None, **kw):
+        if arg != None:
+            kw.update(arg)
+
+        fg = kw.pop('fg', None)
+        if fg != None:
+            self.itemconfigure(self.idLbl, fill=fg)
+
+        tk.Canvas.config(self, kw)
 
     def updateShortName(self):
         self.shortName = self.imageOpener.getShortName(self.name)

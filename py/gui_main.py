@@ -53,6 +53,15 @@ class KEY:
     CHECK_AFTER_SAVE_AS   = 'check-after-save-as'
     CHECK_AFTER_SAVE_COPY = 'check-after-save-copy'
 
+    COLOR_BG          = 'color-background'
+    COLOR_BG_SELECTED = 'color-background-selected'
+    COLOR_BG_ACTIVE   = 'color-background-active'
+    COLOR_TEXT          = 'color-text'
+    COLOR_TEXT_SELECTED = 'color-text-selected'
+    COLOR_TEXT_ACTIVE   = 'color-text-active'
+    COLOR_TEXT_WARNING  = 'color-text-log-warning'
+    COLOR_TEXT_ERROR    = 'color-text-log-error'
+
     WIDTH_NOTES = 'width-notes'
     WIDTH_LABEL_INFO = 'width-selection-info'
 
@@ -83,7 +92,7 @@ class MainWindow(tk.Tk):
         self._solutionEditorChildPanes = list()
 
         # catalogs
-        self.notebook = ttk.Notebook(self.frameMain)
+        self.notebook = ttk.Notebook(self.frameMain, style='TNotebook')
         #self.notebook.configure(takefocus=False) # only affects tab, makes no difference when clicked on
         self.notebook.pack()
         self.objectCatalogs = list()
@@ -159,6 +168,7 @@ class MainWindow(tk.Tk):
         self.textNotes.bind('<FocusIn>',  self.setReturnFocusToNotes, '+')
         self.textNotes.bind('<Tab>', lambda event: tkx.only(event.widget.tk_focusNext().focus_set()))
         self.protocol(tkc.WM_DELETE_WINDOW, self.myExit)
+        self.applySettings()
 
     def updateTitle(self):
         self.title(self.titlePattern.format(
@@ -228,12 +238,82 @@ class MainWindow(tk.Tk):
         settings.setdefault(KEY.CHECK_AFTER_SAVE_AS,   True)
         settings.setdefault(KEY.CHECK_AFTER_SAVE_COPY, True)
 
+        settings.setdefault(KEY.COLOR_BG,          None)
+        settings.setdefault(KEY.COLOR_BG_SELECTED, None)
+        settings.setdefault(KEY.COLOR_BG_ACTIVE,   None)
+        settings.setdefault(KEY.COLOR_TEXT,          None)
+        settings.setdefault(KEY.COLOR_TEXT_SELECTED, None)
+        settings.setdefault(KEY.COLOR_TEXT_ACTIVE,   None)
+        settings.setdefault(KEY.COLOR_TEXT_WARNING,  'orange')
+        settings.setdefault(KEY.COLOR_TEXT_ERROR,    'red')
+
         settings.setdefault(KEY.VIEW_MOVABILITY_INDICATORS, False)
         settings.setdefault(KEY.AUTO_TRIGGER_SANITY_CHECK, True)
         settings.setdefault(KEY.WIDTH_NOTES, 40)
         settings.setdefault(KEY.WIDTH_LABEL_INFO, 50)
         
         settings.setdefault(settings_manager.KEY.UPDATE_SETTINGS, True)
+
+    def applySettings(self):
+        bg         = settings[KEY.COLOR_BG]
+        bgSelected = settings[KEY.COLOR_BG_SELECTED]
+        bgActive   = settings[KEY.COLOR_BG_ACTIVE]
+        text         = settings[KEY.COLOR_TEXT]
+        textSelected = settings[KEY.COLOR_TEXT_SELECTED]
+        textActive   = settings[KEY.COLOR_TEXT_ACTIVE]
+        textWarning  = settings[KEY.COLOR_TEXT_WARNING]
+        textError    = settings[KEY.COLOR_TEXT_ERROR]
+
+        self.sideFrame.setTextColors(normal=text, warning=textWarning, error=textError)
+        
+        if bg != None:
+            self.configAll(self, dict(bg=bg))
+            self.configAll(self, dict(activebackground=bgActive))
+            self.configAll(self, dict(fg=text))
+            self.configAll(self, dict(activeforeground=textActive))
+
+            gui_solution_view.SolutionViewRaw.KW_COR_SELECTED['fill'] = text
+            gui_solution_view.SolutionViewRaw.KW_STEP_NUMBER ['fill'] = text
+            gui_solution_view.SolutionViewRaw.KW_STEP_TEXT   ['fill'] = text
+            gui_solution_view.SolutionViewRaw.KW_INFO        ['fill'] = text
+
+            for cat in self.objectCatalogs:
+                # I am consciously *not* setting the text color to selected
+                self.configAll(cat, dict(bg=bgSelected))
+
+            noteStyler = ttk.Style()
+            
+            # https://stackoverflow.com/a/29572789
+            # Import the Notebook.tab element from the default theme
+            noteStyler.element_create('Plain.Notebook.tab', "from", 'default')
+            # Redefine the TNotebook Tab layout to use the new element
+            noteStyler.layout("TNotebook.Tab",
+                [('Plain.Notebook.tab', {'children':
+                    [('Notebook.padding', {'side': 'top', 'children':
+                        [('Notebook.focus', {'side': 'top', 'children':
+                            [('Notebook.label', {'side': 'top', 'sticky': ''})],
+                        'sticky': 'nswe'})],
+                    'sticky': 'nswe'})],
+                'sticky': 'nswe'})])
+            noteStyler.configure("TNotebook", background=bg, borderwidth=1)
+            noteStyler.configure("TNotebook.Tab", background=bg, foreground=text,
+                                                  lightcolor=textActive, borderwidth=1)
+            #http://page.sourceforge.net/html/themes.html
+            #https://wiki.tcl.tk/37973#pagetoc31f1638c
+            noteStyler.map('TNotebook.Tab',
+                    background=[('selected', bgSelected), ('active', bgActive)],
+                    foreground=[('selected', textSelected), ('active', textActive)],
+            )
+
+    def configAll(self, widget, kw):
+        try:
+            widget.config(kw)
+        except:
+            pass
+
+        for child in widget.children.values():
+            self.configAll(child, kw)
+
 
 
     # ---------- modes ----------

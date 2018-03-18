@@ -39,10 +39,18 @@ class LogFrame(tkx.FrameWithTitle):
         self.msgFrame.grid_columnconfigure(self.COL_MSG, weight=1)
         self.row = 1
 
+        self.setTextColors(normal = 'black', error = 'red', warning = 'orange')
+
         self.command = None
         self.reloadButton = None
         self.varAutoReload = tk.BooleanVar(value=autoReload)
         self.varState = tk.BooleanVar(value=False)
+
+    def setTextColors(self, normal, warning, error):
+        self.textColorNormal  = normal
+        self.textColorError   = error
+        self.textColorWarning = warning
+
 
 
     # ---------- reload ----------
@@ -60,18 +68,22 @@ class LogFrame(tkx.FrameWithTitle):
             return
         
         if self.reloadButton == None:
-            self.btnFrame = tk.Frame(self)
+            bg = self['bg']
+            fg = self.textColorNormal
+
+            self.btnFrame = tk.Frame(self, bg=bg)
             self.btnFrame.pack(side=tk.TOP, before=self.msgFrame, anchor=tk.CENTER)
-            self.padding = tk.Frame(self, height=self['pady'])
+            self.padding = tk.Frame(self, height=self['pady'], bg=bg)
             self.padding.pack(side=tk.TOP, before=self.msgFrame, anchor=tk.CENTER)
 
-            self.autoReloadCheckbox = tkx.Checkbutton(self.btnFrame, command=self._onReloadModeChange, variable=self.varAutoReload, takefocus=self.__takefocus)
+            #TODO: activebackground, activeforeground
+            self.autoReloadCheckbox = tkx.Checkbutton(self.btnFrame, command=self._onReloadModeChange, variable=self.varAutoReload, bg=bg, selectcolor=bg, fg=fg, bd=0, highlightthickness=0, takefocus=self.__takefocus)
             self.autoReloadCheckbox.bind('<Map>', self.onMap)
             self.autoReloadCheckbox.bind('<Unmap>', self.onUnMap)
             self.autoReloadCheckbox.pack(side=tk.LEFT)
 
-            self.autoReloadLabel = tk.Label(self.btnFrame, text=_("Auto Reload"))
-            self.reloadButton = tk.Button(self.btnFrame, text=_("Reload"), takefocus=self.__takefocus)
+            self.autoReloadLabel = tk.Label(self.btnFrame, text=_("Auto Reload"), bg=bg, fg=fg)
+            self.reloadButton = tk.Button(self.btnFrame, text=_("Reload"), bg=bg, fg=fg, takefocus=self.__takefocus)
 
             self._onReloadModeChange()
             
@@ -102,16 +114,18 @@ class LogFrame(tkx.FrameWithTitle):
     # ---------- messages ----------
 
     def addMessage(self, level, msg):
+        bg = self['bg']
+        fg = self.textColorNormal
         if level >= logging.ERROR:
-            color = 'red'
+            color = self.textColorError
         elif level >= logging.WARNING:
-            color = 'orange'
+            color = self.textColorWarning
         else:
-            color = 'black'
+            color = self.textColorNormal
         
-        blt = tk.Label(self.msgFrame, text=self.BULLET, fg=color, padx=0)
-        lbl = tk.Label(self.msgFrame, text=msg, fg=color, justify=tk.LEFT, padx=0)
-        btn = tkx.SmallCloseButton(self.msgFrame, takefocus=self.__takefocus)
+        blt = tk.Label(self.msgFrame, text=self.BULLET, bg=bg, fg=color, padx=0)
+        lbl = tk.Label(self.msgFrame, text=msg, bg=bg, fg=color, justify=tk.LEFT, padx=0)
+        btn = tkx.SmallCloseButton(self.msgFrame, takefocus=self.__takefocus, bg=bg, fg=fg)
         btn.configure(command=lambda: self._rmMessage(blt, lbl, btn))
 
         blt.grid(row=self.row, column=self.COL_BULLET, sticky=tk.NE, pady=self.PAD_Y)

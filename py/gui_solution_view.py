@@ -58,6 +58,10 @@ class SolutionViewRaw(tk.Canvas):
     KW_COR_INVALID_UNSELECTED = dict(fill='orange')
     KW_COR_INVALID_SELECTED   = dict(fill='red')
 
+    KW_STEP_NUMBER = dict()
+    KW_STEP_TEXT   = dict()
+    KW_INFO        = dict()
+
     ALIGN_CENTER = tk.CENTER
     ALIGN_LEFT   = tk.W
     ALIGN_RIGHT  = tk.E
@@ -240,8 +244,8 @@ class SolutionViewRaw(tk.Canvas):
             else:
                 y = self.getRowCenterY( row )
                 widgets = list()
-                widgets.append( self._mycreate(self.create_text,  self.COL_STEP_NUMBER, y) )
-                widgets.append( self._mycreate(self.create_text,  self.COL_TEXT, y) )
+                widgets.append( self._mycreate(self.create_text,  self.COL_STEP_NUMBER, y, **self.KW_STEP_NUMBER) )
+                widgets.append( self._mycreate(self.create_text,  self.COL_TEXT, y, **self.KW_STEP_TEXT) )
                 widgets.append( self._mycreate(self.create_image, self.COL_ICON, y) )
                 self._gridWidgets.append( widgets )
             
@@ -295,7 +299,7 @@ class SolutionViewRaw(tk.Canvas):
                 x = self._x0 + self.PAD_X_CURSOR
                 y = self.getRowCenterY(0.5)
                 #TODO: center (place real label)
-                self._labelNoStepsExisting = self.create_text(x,y, anchor=self.ALIGN_LEFT, text=_("(No steps existing yet)"))
+                self._labelNoStepsExisting = self.create_text(x,y, anchor=self.ALIGN_LEFT, text=_("(No steps existing yet)"), **self.KW_INFO)
                 width = self.getWidth(self._labelNoStepsExisting)
                 self._xLast = x + width
             return
@@ -304,8 +308,8 @@ class SolutionViewRaw(tk.Canvas):
             self.delete(self._labelNoStepsExisting)
             self._labelNoStepsExisting = None
 
-    def _mycreate(self, createMethod, col, y):
-        return createMethod(self._x[col], y, tags=[self.getTagColumn(col)], anchor=self._colAligns[col])
+    def _mycreate(self, createMethod, col, y, **kw):
+        return createMethod(self._x[col], y, tags=[self.getTagColumn(col)], anchor=self._colAligns[col], **kw)
 
 
     def drawCoordinates(self, width=None):
