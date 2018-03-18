@@ -59,6 +59,7 @@ class KEY:
     COLOR_TEXT          = 'color-text'
     COLOR_TEXT_SELECTED = 'color-text-selected'
     COLOR_TEXT_ACTIVE   = 'color-text-active'
+    COLOR_TEXT_SUCCESS  = 'color-text-log-success'
     COLOR_TEXT_WARNING  = 'color-text-log-warning'
     COLOR_TEXT_ERROR    = 'color-text-log-error'
 
@@ -244,6 +245,7 @@ class MainWindow(tk.Tk):
         settings.setdefault(KEY.COLOR_TEXT,          None)
         settings.setdefault(KEY.COLOR_TEXT_SELECTED, None)
         settings.setdefault(KEY.COLOR_TEXT_ACTIVE,   None)
+        settings.setdefault(KEY.COLOR_TEXT_SUCCESS,  'green')
         settings.setdefault(KEY.COLOR_TEXT_WARNING,  'orange')
         settings.setdefault(KEY.COLOR_TEXT_ERROR,    'red')
 
@@ -261,10 +263,11 @@ class MainWindow(tk.Tk):
         text         = settings[KEY.COLOR_TEXT]
         textSelected = settings[KEY.COLOR_TEXT_SELECTED]
         textActive   = settings[KEY.COLOR_TEXT_ACTIVE]
+        textSuccess  = settings[KEY.COLOR_TEXT_SUCCESS]
         textWarning  = settings[KEY.COLOR_TEXT_WARNING]
         textError    = settings[KEY.COLOR_TEXT_ERROR]
 
-        self.sideFrame.setTextColors(normal=text, warning=textWarning, error=textError)
+        self.sideFrame.setTextColors(normal=text, success=textSuccess, warning=textWarning, error=textError)
         
         if bg != None:
             self.configAll(self, dict(bg=bg))

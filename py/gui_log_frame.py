@@ -39,22 +39,25 @@ class LogFrame(tkx.FrameWithTitle):
         self.msgFrame.grid_columnconfigure(self.COL_MSG, weight=1)
         self.row = 1
 
-        self.setTextColors(normal = 'black', error = 'red', warning = 'orange')
+        self.setTextColors(normal = 'black', error = 'red', warning = 'orange', success = 'green')
 
         self.command = None
         self.reloadButton = None
         self.varAutoReload = tk.BooleanVar(value=autoReload)
         self.varState = tk.BooleanVar(value=False)
 
-    def setTextColors(self, normal, warning, error):
+    def setTextColors(self, normal, error, warning, success):
         if error == None:
             error = normal
         if warning == None:
             warning = normal
+        if success == None:
+            success = normal
 
         self.textColorNormal  = normal
         self.textColorError   = error
         self.textColorWarning = warning
+        self.textColorSuccess = success
 
 
 
@@ -143,14 +146,14 @@ class LogFrame(tkx.FrameWithTitle):
         blt.destroy()
         lbl.destroy()
         btn.destroy()
-        self._messageIfEmpty(_("(all found problems\nhave been removed)"), 'orange')
+        self._messageIfEmpty(_("(all found problems\nhave been removed)"), self.colorWarning)
 
     def _messageIfEmpty(self, msg, color):
         if self.isEmpty():
-            tk.Label(self.msgFrame, text="\n"+msg, fg=color, anchor=tk.CENTER).pack(side=tk.TOP)
+            tk.Label(self.msgFrame, text="\n"+msg, bg=self['bg'], fg=color, anchor=tk.CENTER).pack(side=tk.TOP)
 
     def complete(self):
-        self._messageIfEmpty(_("(no problems\nhave been found)"), 'green')
+        self._messageIfEmpty(_("(no problems\nhave been found)"), self.textColorSuccess)
 
     def isEmpty(self):
         return len(self.msgFrame.winfo_children()) == 0
