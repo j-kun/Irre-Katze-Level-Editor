@@ -57,7 +57,9 @@ class KEY:
     COLOR_BG_SELECTED = 'color-background-selected'
     COLOR_BG_ACTIVE   = 'color-background-active'
     COLOR_BG_ENTRY    = 'color-background-entry'
+    COLOR_BG_SOLUTION_SELECTION     = 'color-background-solution-selection'
 
+    COLOR_BORDER_SOLUTION_SELECTION = 'color-border-solution-selection'
     COLOR_HIGHLIGHT   = 'color-border-highlight'
 
     COLOR_TEXT          = 'color-text'
@@ -67,6 +69,10 @@ class KEY:
     COLOR_TEXT_SUCCESS  = 'color-text-log-success'
     COLOR_TEXT_WARNING  = 'color-text-log-warning'
     COLOR_TEXT_ERROR    = 'color-text-log-error'
+    COLOR_TEXT_COR_UNSELECTED         = 'color-text-solution-coordinate'
+    COLOR_TEXT_COR_SELECTED           = 'color-text-solution-coordinate-selected'
+    COLOR_TEXT_COR_INVALID_UNSELECTED = 'color-text-solution-coordinate-invalid'
+    COLOR_TEXT_COR_INVALID_SELECTED   = 'color-text-solution-coordinate-invalid-selected'
 
     WIDTH_NOTES = 'width-notes'
     WIDTH_LABEL_INFO = 'width-selection-info'
@@ -248,7 +254,9 @@ class MainWindow(tk.Tk):
         settings.setdefault(KEY.COLOR_BG_SELECTED, None)
         settings.setdefault(KEY.COLOR_BG_ACTIVE,   None)
         settings.setdefault(KEY.COLOR_BG_ENTRY,    None)
+        settings.setdefault(KEY.COLOR_BG_SOLUTION_SELECTION,     '#D1E3F5')
 
+        settings.setdefault(KEY.COLOR_BORDER_SOLUTION_SELECTION, '#4A90D9')
         settings.setdefault(KEY.COLOR_HIGHLIGHT,   None)
 
         settings.setdefault(KEY.COLOR_TEXT,          None)
@@ -258,6 +266,10 @@ class MainWindow(tk.Tk):
         settings.setdefault(KEY.COLOR_TEXT_SUCCESS,  'green')
         settings.setdefault(KEY.COLOR_TEXT_WARNING,  'orange')
         settings.setdefault(KEY.COLOR_TEXT_ERROR,    'red')
+        settings.setdefault(KEY.COLOR_TEXT_COR_UNSELECTED,         'gray')
+        settings.setdefault(KEY.COLOR_TEXT_COR_SELECTED,           None)
+        settings.setdefault(KEY.COLOR_TEXT_COR_INVALID_UNSELECTED, 'orange')
+        settings.setdefault(KEY.COLOR_TEXT_COR_INVALID_SELECTED,   'red')
 
         settings.setdefault(KEY.VIEW_MOVABILITY_INDICATORS, False)
         settings.setdefault(KEY.AUTO_TRIGGER_SANITY_CHECK, True)
@@ -271,6 +283,7 @@ class MainWindow(tk.Tk):
         bgSelected = settings[KEY.COLOR_BG_SELECTED]
         bgActive   = settings[KEY.COLOR_BG_ACTIVE]
         bgEntry    = settings[KEY.COLOR_BG_ENTRY]
+
         text         = settings[KEY.COLOR_TEXT]
         textSelected = settings[KEY.COLOR_TEXT_SELECTED]
         textActive   = settings[KEY.COLOR_TEXT_ACTIVE]
@@ -278,10 +291,17 @@ class MainWindow(tk.Tk):
         textSuccess  = settings[KEY.COLOR_TEXT_SUCCESS]
         textWarning  = settings[KEY.COLOR_TEXT_WARNING]
         textError    = settings[KEY.COLOR_TEXT_ERROR]
+        textCor                = settings[KEY.COLOR_TEXT_COR_UNSELECTED]
+        textCorSelected        = settings[KEY.COLOR_TEXT_COR_SELECTED]
+        textCorInvalid         = settings[KEY.COLOR_TEXT_COR_INVALID_UNSELECTED]
+        textCorInvalidSelected = settings[KEY.COLOR_TEXT_COR_INVALID_SELECTED]
+
         highlight    = settings[KEY.COLOR_HIGHLIGHT]
+        borderSolutionSelection = settings[KEY.COLOR_BORDER_SOLUTION_SELECTION]
+        bgSolutionSelection     = settings[KEY.COLOR_BG_SOLUTION_SELECTION]
 
         self.sideFrame.setTextColors(normal=text, success=textSuccess, warning=textWarning, error=textError)
-        
+
         if bg != None:
             self.configAll(self, dict(bg=bg))
             self.configAll(self, dict(highlightbackground=bg))
@@ -295,7 +315,6 @@ class MainWindow(tk.Tk):
             #WARNING: selectcolor is foreground in menu checkbuttons but background in normal checkbuttons
             self.configAll(self.menubar, dict(selectcolor=text))
 
-            gui_solution_view.SolutionViewRaw.KW_COR_SELECTED['fill'] = text
             gui_solution_view.SolutionViewRaw.KW_STEP_NUMBER ['fill'] = text
             gui_solution_view.SolutionViewRaw.KW_STEP_TEXT   ['fill'] = text
             gui_solution_view.SolutionViewRaw.KW_INFO        ['fill'] = text
@@ -362,6 +381,27 @@ class MainWindow(tk.Tk):
 
         if textError != None:
             self.board.setCommandlineTextColorError(textError)
+
+
+        if textCorSelected == None:
+            textCorSelected = text
+        if textCor == None:
+            textCor = text
+        if textCorInvalidSelected == None:
+            textCorInvalidSelected = text
+        if textCorInvalid == None:
+            textCorInvalid = text
+
+        gui_solution_view.SolutionViewRaw.KW_COR_SELECTED['fill'] = textCorSelected
+        gui_solution_view.SolutionViewRaw.KW_COR_UNSELECTED['fill'] = textCor
+        gui_solution_view.SolutionViewRaw.KW_COR_INVALID_SELECTED['fill'] = textCorInvalidSelected
+        gui_solution_view.SolutionViewRaw.KW_COR_INVALID_UNSELECTED['fill'] = textCorInvalid
+
+        if bgSolutionSelection != None:
+            gui_solution_view.SolutionViewRaw.COLOR_SELECTION_FILL = bgSolutionSelection
+        if borderSolutionSelection != None:
+            gui_solution_view.SolutionViewRaw.COLOR_SELECTION_OUTLINE = borderSolutionSelection
+
 
 
     def configAll(self, widget, kw):
