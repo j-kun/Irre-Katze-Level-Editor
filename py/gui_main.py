@@ -56,6 +56,9 @@ class KEY:
     COLOR_BG          = 'color-background'
     COLOR_BG_SELECTED = 'color-background-selected'
     COLOR_BG_ACTIVE   = 'color-background-active'
+
+    COLOR_HIGHLIGHT   = 'color-border-highlight'
+
     COLOR_TEXT          = 'color-text'
     COLOR_TEXT_SELECTED = 'color-text-selected'
     COLOR_TEXT_ACTIVE   = 'color-text-active'
@@ -242,6 +245,9 @@ class MainWindow(tk.Tk):
         settings.setdefault(KEY.COLOR_BG,          None)
         settings.setdefault(KEY.COLOR_BG_SELECTED, None)
         settings.setdefault(KEY.COLOR_BG_ACTIVE,   None)
+
+        settings.setdefault(KEY.COLOR_HIGHLIGHT,   None)
+
         settings.setdefault(KEY.COLOR_TEXT,          None)
         settings.setdefault(KEY.COLOR_TEXT_SELECTED, None)
         settings.setdefault(KEY.COLOR_TEXT_ACTIVE,   None)
@@ -266,11 +272,13 @@ class MainWindow(tk.Tk):
         textSuccess  = settings[KEY.COLOR_TEXT_SUCCESS]
         textWarning  = settings[KEY.COLOR_TEXT_WARNING]
         textError    = settings[KEY.COLOR_TEXT_ERROR]
+        highlight    = settings[KEY.COLOR_HIGHLIGHT]
 
         self.sideFrame.setTextColors(normal=text, success=textSuccess, warning=textWarning, error=textError)
         
         if bg != None:
             self.configAll(self, dict(bg=bg))
+            self.configAll(self, dict(highlightbackground=bg))
         if bgActive != None:
             self.configAll(self, dict(activebackground=bgActive))
 
@@ -283,6 +291,11 @@ class MainWindow(tk.Tk):
             gui_solution_view.SolutionViewRaw.KW_STEP_NUMBER ['fill'] = text
             gui_solution_view.SolutionViewRaw.KW_STEP_TEXT   ['fill'] = text
             gui_solution_view.SolutionViewRaw.KW_INFO        ['fill'] = text
+
+        if highlight == None:
+            highlight = text
+        if highlight != None:
+            self.configAll(self, dict(highlightcolor=highlight))
 
         if bgSelected != None:
             for title,cat in set(self._levelEditorChildPanes + self._solutionEditorChildPanes):
