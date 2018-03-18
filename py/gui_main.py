@@ -286,6 +286,8 @@ class MainWindow(tk.Tk):
             self.configAll(self, dict(activeforeground=textActive))
         if text != None:
             self.configAll(self, dict(fg=text))
+            #WARNING: selectcolor is foreground in menu checkbuttons but background in normal checkbuttons
+            self.configAll(self.menubar, dict(selectcolor=text))
 
             gui_solution_view.SolutionViewRaw.KW_COR_SELECTED['fill'] = text
             gui_solution_view.SolutionViewRaw.KW_STEP_NUMBER ['fill'] = text
