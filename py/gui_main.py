@@ -277,7 +277,7 @@ class MainWindow(tk.Tk):
             gui_solution_view.SolutionViewRaw.KW_STEP_TEXT   ['fill'] = text
             gui_solution_view.SolutionViewRaw.KW_INFO        ['fill'] = text
 
-            for cat in self.objectCatalogs:
+            for title,cat in set(self._levelEditorChildPanes + self._solutionEditorChildPanes):
                 # I am consciously *not* setting the text color to selected
                 self.configAll(cat, dict(bg=bgSelected))
 
