@@ -47,6 +47,11 @@ class LogFrame(tkx.FrameWithTitle):
         self.varState = tk.BooleanVar(value=False)
 
     def setTextColors(self, normal, warning, error):
+        if error == None:
+            error = normal
+        if warning == None:
+            warning = normal
+
         self.textColorNormal  = normal
         self.textColorError   = error
         self.textColorWarning = warning

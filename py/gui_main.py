@@ -268,19 +268,25 @@ class MainWindow(tk.Tk):
         
         if bg != None:
             self.configAll(self, dict(bg=bg))
+        if bgActive != None:
             self.configAll(self, dict(activebackground=bgActive))
-            self.configAll(self, dict(fg=text))
+
+        if textActive != None:
             self.configAll(self, dict(activeforeground=textActive))
+        if text != None:
+            self.configAll(self, dict(fg=text))
 
             gui_solution_view.SolutionViewRaw.KW_COR_SELECTED['fill'] = text
             gui_solution_view.SolutionViewRaw.KW_STEP_NUMBER ['fill'] = text
             gui_solution_view.SolutionViewRaw.KW_STEP_TEXT   ['fill'] = text
             gui_solution_view.SolutionViewRaw.KW_INFO        ['fill'] = text
 
+        if bgSelected != None:
             for title,cat in set(self._levelEditorChildPanes + self._solutionEditorChildPanes):
                 # I am consciously *not* setting the text color to selected
                 self.configAll(cat, dict(bg=bgSelected))
 
+        if bg != None or text != None or bgSelected != None or bgActive != None or textSelected != None or textActive != None:
             noteStyler = ttk.Style()
             
             # https://stackoverflow.com/a/29572789
@@ -295,15 +301,30 @@ class MainWindow(tk.Tk):
                         'sticky': 'nswe'})],
                     'sticky': 'nswe'})],
                 'sticky': 'nswe'})])
-            noteStyler.configure("TNotebook", background=bg, borderwidth=1)
-            noteStyler.configure("TNotebook.Tab", background=bg, foreground=text,
-                                                  lightcolor=textActive, borderwidth=1)
+
+            kw = dict()
+            if bg != None:
+                kw['background'] = bg
+            noteStyler.configure("TNotebook", borderwidth=1, **kw)
+            if text != None:
+                kw['foreground'] = text
+            noteStyler.configure("TNotebook.Tab", borderwidth=1, **kw)
+
             #http://page.sourceforge.net/html/themes.html
             #https://wiki.tcl.tk/37973#pagetoc31f1638c
-            noteStyler.map('TNotebook.Tab',
-                    background=[('selected', bgSelected), ('active', bgActive)],
-                    foreground=[('selected', textSelected), ('active', textActive)],
-            )
+            bgs = list()
+            if bgSelected != None:
+                bgs.append(('selected', bgSelected))
+            if bgActive != None:
+                bgs.append(('active', bgActive))
+
+            fgs = list()
+            if textSelected != None:
+                fgs.append(('selected', textSelected))
+            if textActive != None:
+                fgs.append(('active', textActive))
+
+            noteStyler.map('TNotebook.Tab', background=bgs, foreground=fgs)
 
     def configAll(self, widget, kw):
         try:
