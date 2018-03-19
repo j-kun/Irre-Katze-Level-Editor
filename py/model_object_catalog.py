@@ -237,18 +237,14 @@ assert len( set(ATTR_MOVABLE) | set(ATTR_EATABLE) | set(ATTR_FIXED) | set(ATTR_K
 
 # ========== COMMENTS ==========
 
-def getObjectDescription(self, obj):
-    out = codeAndChr(obj)
+OBJECT_DESCRIPTION_FORMAT = u"{objCode:03d} ({objChr}): {properties}"
+OBJECT_DESCRIPTION_PROPERTY_SEP    = u""
+OBJECT_DESCRIPTION_PROPERTY_FORMAT = u"\n - {}"
 
-    comments = getPropertiesList(obj)
-
-    if len(comments) > 0:
-        out += ": " + ", ".join(comments)
-    
+def getObjectDescription(obj):
+    properties = formatList(getPropertiesList(obj), sep = OBJECT_DESCRIPTION_PROPERTY_SEP, form = OBJECT_DESCRIPTION_PROPERTY_FORMAT)
+    out = OBJECT_DESCRIPTION_FORMAT.format(objCode=obj, objChr=codeToChr(obj), properties=properties)
     return out
-
-def codeAndChr(obj):
-    return "%03d (%s)" % (obj, codeToChr(obj))
 
 def getPropertiesList(obj):
     properties = list()
@@ -311,6 +307,10 @@ def getComment(obj):
         return _("kills you when stepping under it")
 
     return ""
+
+
+def formatList(l, form, sep):
+    return sep.join(form.format(x) for x in l)
 
 
 # ========== TEST ==========

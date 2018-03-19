@@ -86,7 +86,7 @@ def setObjectCodeNumber():
 getImage = ImageOpener(
     path = PATH_IMAGES,
     pattern = "irka{0}.gif",
-    getLongName = objects.getObjectDescription,
+    getLongName = lambda self, obj: objects.getObjectDescription(obj),
 )
 getBackground = ImageOpener(
     path = PATH_BACKGROUNDS,

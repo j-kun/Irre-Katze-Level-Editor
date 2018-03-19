@@ -710,7 +710,7 @@ class MainWindow(tk.Tk):
         objChr = objects.codeToChr(obj)
         propertiesList = objects.getPropertiesList(obj)
         
-        properties = lambda sep, p: sep.join(p.format(x) for x in propertiesList)
+        properties = lambda sep, p: objects.formatList(propertiesList, sep=sep, form=p)
         msg = lambda properties: pattern.format(cursorName=cursorName, x=cor[0], y=cor[1], objCode=obj, objChr=objChr, properties=properties)
         
         info = properties(sep=settings[KEY.SELECTION_INFO_PROP_SEP], p=settings[KEY.SELECTION_INFO_PROP_PATTERN])
