@@ -275,9 +275,9 @@ class MainWindow(tk.Tk):
         settings.setdefault(KEY.DEFAULT_DIRECTORY_EXPORT, os.path.expanduser("~"))
         settings.setdefault(KEY.DEFAULT_FILENAME_EXPORT, None)
 
-        settings.setdefault(KEY.ASK_BEFORE_SAVE,      True)
-        settings.setdefault(KEY.ASK_BEFORE_SAVE_AS,   True)
-        settings.setdefault(KEY.ASK_BEFORE_SAVE_COPY, True)
+        settings.setdefault(KEY.ASK_BEFORE_SAVE,      False)
+        settings.setdefault(KEY.ASK_BEFORE_SAVE_AS,   False)
+        settings.setdefault(KEY.ASK_BEFORE_SAVE_COPY, False)
 
         # will only be checked if ASK_BEFORE_SAVE settings are deactivated
         # so these can be activated without the risk of double checking due to the above settings
