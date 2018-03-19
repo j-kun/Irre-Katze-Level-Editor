@@ -442,7 +442,7 @@ class Board(tk.Canvas):
     def eventToModelX(self, event):
         return int(self.canvas.canvasx(event.x)) // imageOpener.FLD_SIZE
     def eventToModelY(self, event):
-        return int(self.canvas.canvasx(event.y)) // imageOpener.FLD_SIZE
+        return int(self.canvas.canvasy(event.y)) // imageOpener.FLD_SIZE
 
     
     # ---------- drawing ----------
