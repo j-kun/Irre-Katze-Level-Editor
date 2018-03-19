@@ -101,7 +101,11 @@ class KEY:
     WIDTH_LABEL_INFO = 'width-selection-info'
     
     SELECTION_INFO_PATTERN         = 'statusbar-selection-info-pattern'
-    SELECTION_INFO_TOOLTIP_PATTERN = 'statusbar-selection-info-tooltip-pattern'
+    SELECTION_INFO_PROP_PATTERN    = 'statusbar-selection-info-property-pattern'
+    SELECTION_INFO_PROP_SEP        = 'statusbar-selection-info-property-separator'
+    SELECTION_INFO_TOOLTIP_PATTERN      = 'statusbar-selection-info-tooltip-pattern'
+    SELECTION_INFO_TOOLTIP_PROP_PATTERN = 'statusbar-selection-info-tooltip-property-pattern'
+    SELECTION_INFO_TOOLTIP_PROP_SEP     = 'statusbar-selection-info-tooltip-property-separator'
     SELECTION_INFO_TOOLTIP_ALWAYS  = 'statusbar-selection-info-tooltip-always'
 
 
@@ -326,8 +330,12 @@ class MainWindow(tk.Tk):
         settings.setdefault(KEY.WIDTH_NOTES, 40)
         settings.setdefault(KEY.WIDTH_LABEL_INFO, 50)
         
-        settings.setdefault(KEY.SELECTION_INFO_PATTERN,         "{cursorName} [{x},{y}]: {objCode:03d} ({objChr}): {info}")
-        settings.setdefault(KEY.SELECTION_INFO_TOOLTIP_PATTERN, "{cursorName} [{x},{y}]\n{objCode:03d} ({objChr}): {info}")
+        settings.setdefault(KEY.SELECTION_INFO_PATTERN,         u"{cursorName} [{x},{y}]: {objCode:03d} ({objChr}): {properties}")
+        settings.setdefault(KEY.SELECTION_INFO_PROP_PATTERN,    u"{}")
+        settings.setdefault(KEY.SELECTION_INFO_PROP_SEP,        u", ")
+        settings.setdefault(KEY.SELECTION_INFO_TOOLTIP_PATTERN,         u"{cursorName} [{x},{y}]\n{objCode:03d} ({objChr}): {properties}")
+        settings.setdefault(KEY.SELECTION_INFO_TOOLTIP_PROP_PATTERN,    u"\n - {}")
+        settings.setdefault(KEY.SELECTION_INFO_TOOLTIP_PROP_SEP,        u"")
         settings.setdefault(KEY.SELECTION_INFO_TOOLTIP_ALWAYS,   False)
         
         settings.setdefault(settings_manager.KEY.UPDATE_SETTINGS, True)
@@ -700,23 +708,27 @@ class MainWindow(tk.Tk):
         
         obj = self.model.getField(*cor)
         objChr = objects.codeToChr(obj)
-        info = ", ".join(objects.getPropertiesList(obj))
+        propertiesList = objects.getPropertiesList(obj)
         
-        msg = lambda: pattern.format(cursorName=cursorName, x=cor[0], y=cor[1], objCode=obj, objChr=objChr, info=info)
+        properties = lambda sep, p: sep.join(p.format(x) for x in propertiesList)
+        msg = lambda properties: pattern.format(cursorName=cursorName, x=cor[0], y=cor[1], objCode=obj, objChr=objChr, properties=properties)
+        
+        info = properties(sep=settings[KEY.SELECTION_INFO_PROP_SEP], p=settings[KEY.SELECTION_INFO_PROP_PATTERN])
+        infoTooltip = lambda: properties(sep=settings[KEY.SELECTION_INFO_TOOLTIP_PROP_SEP], p=settings[KEY.SELECTION_INFO_TOOLTIP_PROP_PATTERN])
         
         pattern = settings[KEY.SELECTION_INFO_TOOLTIP_PATTERN]
         maxWidth = settings[KEY.WIDTH_LABEL_INFO]
         if len(info) > maxWidth:
-            tkx.set_text(self.labelInfo.tooltip, msg())
+            tkx.set_text(self.labelInfo.tooltip, msg(infoTooltip()))
             info = info[:maxWidth-3] + "..."
         else:
             if settings[KEY.SELECTION_INFO_TOOLTIP_ALWAYS]:
-                tkx.set_text(self.labelInfo.tooltip, msg())
+                tkx.set_text(self.labelInfo.tooltip, msg(infoTooltip()))
             else:
                 tkx.set_text(self.labelInfo.tooltip, None)
         
         pattern = settings[KEY.SELECTION_INFO_PATTERN]
-        tkx.set_text(self.labelInfo, msg())
+        tkx.set_text(self.labelInfo, msg(info))
         
 
     def getSelectionInfo(self):
