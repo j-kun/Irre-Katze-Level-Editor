@@ -99,6 +99,10 @@ class KEY:
 
     WIDTH_NOTES = 'width-notes'
     WIDTH_LABEL_INFO = 'width-selection-info'
+    
+    SELECTION_INFO_PATTERN         = 'statusbar-selection-info-pattern'
+    SELECTION_INFO_TOOLTIP_PATTERN = 'statusbar-selection-info-tooltip-pattern'
+    SELECTION_INFO_TOOLTIP_ALWAYS  = 'statusbar-selection-info-tooltip-always'
 
 
 
@@ -321,6 +325,10 @@ class MainWindow(tk.Tk):
         settings.setdefault(KEY.AUTO_TRIGGER_SANITY_CHECK, True)
         settings.setdefault(KEY.WIDTH_NOTES, 40)
         settings.setdefault(KEY.WIDTH_LABEL_INFO, 50)
+        
+        settings.setdefault(KEY.SELECTION_INFO_PATTERN,         "{cursorName} [{x},{y}]: {objCode:03d} ({objChr}): {info}")
+        settings.setdefault(KEY.SELECTION_INFO_TOOLTIP_PATTERN, "{cursorName} [{x},{y}]\n{objCode:03d} ({objChr}): {info}")
+        settings.setdefault(KEY.SELECTION_INFO_TOOLTIP_ALWAYS,   False)
         
         settings.setdefault(settings_manager.KEY.UPDATE_SETTINGS, True)
 
@@ -678,16 +686,37 @@ class MainWindow(tk.Tk):
         self.sideFrame.autoReload()
 
     def updateSelectionInfo(self):
-        info = self.getSelectionInfo()
-        tkx.set_text(self.labelInfo.tooltip, _("Selected object: {descr}").format(descr=info))
+        if self.model.hasVirtualCursor():
+            cor = self.model.getVirtualCursor()
+            cursorName = _("Virtual Cursor")
+        elif self.model.hasCursor():
+            cor = self.model.getLastCursor()
+            cursorName = _("Last Cursor")
+        else:
+            msg = _("<no cursors>")
+            tkx.set_text(self.labelInfo.tooltip, None)
+            tkx.set_text(self.labelInfo, msg)
+            return
         
+        obj = self.model.getField(*cor)
+        objChr = objects.codeToChr(obj)
+        info = ", ".join(objects.getPropertiesList(obj))
+        
+        msg = lambda: pattern.format(cursorName=cursorName, x=cor[0], y=cor[1], objCode=obj, objChr=objChr, info=info)
+        
+        pattern = settings[KEY.SELECTION_INFO_TOOLTIP_PATTERN]
         maxWidth = settings[KEY.WIDTH_LABEL_INFO]
         if len(info) > maxWidth:
-            tkx.set_text(self.labelInfo.tooltip, info)
+            tkx.set_text(self.labelInfo.tooltip, msg())
             info = info[:maxWidth-3] + "..."
         else:
-            tkx.set_text(self.labelInfo.tooltip, None)
-        tkx.set_text(self.labelInfo, _("Selected object: {descr}").format(descr=info))
+            if settings[KEY.SELECTION_INFO_TOOLTIP_ALWAYS]:
+                tkx.set_text(self.labelInfo.tooltip, msg())
+            else:
+                tkx.set_text(self.labelInfo.tooltip, None)
+        
+        pattern = settings[KEY.SELECTION_INFO_PATTERN]
+        tkx.set_text(self.labelInfo, msg())
         
 
     def getSelectionInfo(self):
