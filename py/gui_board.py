@@ -534,6 +534,9 @@ class Board(tk.Canvas):
             fill       = 'yellow'
             debugColor = 'red'
             stipple    = tkc.STIPPLE_GRAY_50
+            virtualCursorFill       = self.textFill
+            virtualCursorDebugColor = self.virtualCursorColor
+            virtualCursorStipple    = self.textStipple
             if   self.debugCursor == self.DEBUG_CURSOR_LEFT_TO_RIGHT:
                 indices = tuple(self.model.cursors.index(c) for c in self.model.getCursorsForSwapRight())
                 debugDirection = u"→"
