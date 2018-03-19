@@ -5,20 +5,11 @@ import os.path
 
 # other
 import model_object_catalog as objects
-import system
 from locales import _
 
 import tkinter_extensions as tkx
 tk = tkx.tk
 
-
-ENCODING = 'windows-1252'
-if system.isPython3():
-    def objCodeToChr(num):
-        return bytes((num,)).decode(ENCODING)
-else:
-    def objCodeToChr(num):
-        return chr(num).decode(ENCODING)
 
 toAbsPath = objects.toAbsPath
 PATH_BACKGROUNDS = toAbsPath('backgrounds/gif')
@@ -86,44 +77,16 @@ class ImageOpener(object):
             return self._shortNameToValue(self, name)
 
 def setObjectCodeCharacter():
-    getImage._getShortName = lambda self, value: objCodeToChr(value)
+    getImage._getShortName = lambda self, value: objects.codeToChr(value)
 
 def setObjectCodeNumber():
     getImage._getShortName = None
 
 
-def getObjectDescription(self, obj):
-    out = "%03d (%s)"%(obj, objCodeToChr(obj))
-
-    comments = list()
-    
-    if obj in objects.GRAVITY_OBEYING:
-        comments.append(_("obeys gravity"))
-    elif obj in objects.GRAVITY_RESISTANT:
-        comments.append(_("gravity resistant"))
-
-    if obj in objects.ATTR_MOVABLE:
-        comments.append(_("movable"))
-    elif obj in objects.ATTR_EATABLE:
-        comments.append(_("eatable"))
-    elif obj in objects.ATTR_FIXED:
-        comments.append(_("*not* movable"))
-    elif obj in objects.ATTR_KILLING:
-        comments.append(_("kills you when stepping on it"))
-
-    tmp = objects.getComment(obj)
-    if tmp != "":
-        comments.append(tmp)
-
-    if len(comments) > 0:
-        out += ": " + ", ".join(comments)
-    
-    return out
-
 getImage = ImageOpener(
     path = PATH_IMAGES,
     pattern = "irka{0}.gif",
-    getLongName = getObjectDescription,
+    getLongName = objects.getObjectDescription,
 )
 getBackground = ImageOpener(
     path = PATH_BACKGROUNDS,

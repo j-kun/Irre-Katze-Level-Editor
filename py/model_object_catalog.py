@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
+# standard
 import os.path
 import re
 import logging
 
+# other
+import system
 import locales
 _ = locales._
 
@@ -12,6 +15,14 @@ def toAbsPath(relPath):
     return os.path.join(os.path.split(os.path.split(__file__)[0])[0], relPath)
 
 PATH = toAbsPath('images/gif')
+
+ENCODING = 'windows-1252'
+if system.isPython3():
+    def codeToChr(num):
+        return bytes((num,)).decode(ENCODING)
+else:
+    def codeToChr(num):
+        return chr(num).decode(ENCODING)
 
 
 # ========== OBJECTS ==========
@@ -225,6 +236,42 @@ assert len( set(ATTR_MOVABLE) | set(ATTR_EATABLE) | set(ATTR_FIXED) | set(ATTR_K
 
 
 # ========== COMMENTS ==========
+
+def getObjectDescription(self, obj):
+    out = codeAndChr(obj)
+
+    comments = getPropertiesList(obj)
+
+    if len(comments) > 0:
+        out += ": " + ", ".join(comments)
+    
+    return out
+
+def codeAndChr(obj):
+    return "%03d (%s)" % (obj, codeToChr(obj))
+
+def getPropertiesList(obj):
+    properties = list()
+    
+    if obj in GRAVITY_OBEYING:
+        properties.append(_("obeys gravity"))
+    elif obj in GRAVITY_RESISTANT:
+        properties.append(_("gravity resistant"))
+
+    if obj in ATTR_MOVABLE:
+        properties.append(_("movable"))
+    elif obj in ATTR_EATABLE:
+        properties.append(_("eatable"))
+    elif obj in ATTR_FIXED:
+        properties.append(_("*not* movable"))
+    elif obj in ATTR_KILLING:
+        properties.append(_("kills you when stepping on it"))
+    
+    tmp = getComment(obj)
+    if tmp != "":
+        properties.append(tmp)
+    
+    return properties
 
 def getComment(obj):
     # special fields

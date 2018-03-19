@@ -753,7 +753,7 @@ class Solution(object):
             corBoard = self.model.flipCoordinate(cor) if isFlipped else cor
             if corBoard in forbiddenFields:
                 # forbidden fields are on board => x,y can not be illegal coordinate => calling getField is save
-                objDescr = imageOpener.getImage.getLongName(self.model.getField(*cor))
+                objDescr = objects.getObjectDescription(self.model.getField(*cor))
                 error(_("steps on unmovable obstacle in step {i} ({x},{y}): {obj}").format(i=i, x=x, y=y, obj=objDescr))
             elif self.model.isAboveFire(cor, isFlipped):
                 error(_("steps above fire in step {i} ({x},{y})").format(i=i, x=x, y=y))
@@ -791,7 +791,7 @@ class Model(object):
     """
 
     EXT_TASK = '.afg'
-    ENCODING = imageOpener.ENCODING
+    ENCODING = objects.ENCODING
 
     HEADER = u'35+\xa1\xb3/r\xe7!\xe6\xa7'
 
@@ -2164,7 +2164,7 @@ class Model(object):
         out = u""
         for row in range(self.ROWS):
             for col in range(self.COLS):
-                out += imageOpener.objCodeToChr(self.getField(x=col, y=row))
+                out += objects.codeToChr(self.getField(x=col, y=row))
             out += "\n"
         return out.rstrip('\n')
 
