@@ -93,9 +93,9 @@ class KEY:
     CURSOR_IS_TEXT_BG_COLOR_DOMINANT = 'cursor-is-overlay-text-background-color-dominant'
     CURSOR_IS_TEXT_BG_STIPPLE_DOMINANT = 'cursor-is-overlay-text-background-stipple-dominant'
 
-    CURSOR_TEXT_FG_COLOR   = 'overlay-text-color'
-    CURSOR_TEXT_BG_COLOR   = 'overlay-text-background-color'
-    CURSOR_TEXT_BG_STIPPLE = 'overlay-text-background-stipple'
+    OVERLAY_TEXT_FG_COLOR   = 'overlay-text-color'
+    OVERLAY_TEXT_BG_COLOR   = 'overlay-text-background-color'
+    OVERLAY_TEXT_BG_STIPPLE = 'overlay-text-background-stipple'
 
     WIDTH_NOTES = 'width-notes'
     WIDTH_LABEL_INFO = 'width-selection-info'
@@ -313,9 +313,9 @@ class MainWindow(tk.Tk):
         settings.setdefault(KEY.CURSOR_IS_TEXT_BG_COLOR_DOMINANT, gui_board.Board.isTextFillDominant)
         settings.setdefault(KEY.CURSOR_IS_TEXT_BG_STIPPLE_DOMINANT, gui_board.Board.isTextStippleDominant)
 
-        settings.setdefault(KEY.CURSOR_TEXT_FG_COLOR  , gui_board.Board.textColor)
-        settings.setdefault(KEY.CURSOR_TEXT_BG_COLOR  , gui_board.Board.textFill)
-        settings.setdefault(KEY.CURSOR_TEXT_BG_STIPPLE, gui_board.Board.textStipple)
+        settings.setdefault(KEY.OVERLAY_TEXT_FG_COLOR  , gui_board.Board.textColor)
+        settings.setdefault(KEY.OVERLAY_TEXT_BG_COLOR  , gui_board.Board.textFill)
+        settings.setdefault(KEY.OVERLAY_TEXT_BG_STIPPLE, gui_board.Board.textStipple)
 
         settings.setdefault(KEY.VIEW_MOVABILITY_INDICATORS, False)
         settings.setdefault(KEY.AUTO_TRIGGER_SANITY_CHECK, True)
@@ -494,13 +494,13 @@ class MainWindow(tk.Tk):
         if v != None:
             gui_board.Board.virtualCursorStipple = v
 
-        v = settings[KEY.CURSOR_TEXT_FG_COLOR]
+        v = settings[KEY.OVERLAY_TEXT_FG_COLOR]
         if v != None:
             gui_board.Board.textColor = v
-        v = settings[KEY.CURSOR_TEXT_BG_COLOR]
+        v = settings[KEY.OVERLAY_TEXT_BG_COLOR]
         if v != None:
             gui_board.Board.textFill = v
-        v = settings[KEY.CURSOR_TEXT_BG_STIPPLE]
+        v = settings[KEY.OVERLAY_TEXT_BG_STIPPLE]
         if v != None:
             gui_board.Board.textStipple = v
 
