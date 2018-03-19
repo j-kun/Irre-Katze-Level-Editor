@@ -150,11 +150,10 @@ class Board(tk.Canvas):
         self.canvas.bind('<Return>' ,  lambda e: self.enterNewObject())
         self.canvas.bind('<Key>' ,  self.onKeyListener)
         
-        #TODO: respect isEndActive
-        self.canvas.bind('<Alt-Right>', lambda e: model.swapFieldRight())
-        self.canvas.bind('<Alt-Left>',  lambda e: model.swapFieldLeft())
-        self.canvas.bind('<Alt-Up>',    lambda e: model.swapFieldUp())
-        self.canvas.bind('<Alt-Down>',  lambda e: model.swapFieldDown())
+        self.canvas.bind('<Alt-Right>', lambda e: model.swapFieldRight() if not self.isEndActive else model.swapFieldToRight())
+        self.canvas.bind('<Alt-Left>',  lambda e: model.swapFieldLeft()  if not self.isEndActive else model.swapFieldToLeft())
+        self.canvas.bind('<Alt-Up>',    lambda e: model.swapFieldUp()    if not self.isEndActive else model.swapFieldToTop())
+        self.canvas.bind('<Alt-Down>',  lambda e: model.swapFieldDown()  if not self.isEndActive else model.swapFieldToBottom())
 
         self.canvas.bind('<Shift-Alt-Right>', lambda e: model.moveFieldRight() if not self.isEndActive else model.moveFieldToRight())
         self.canvas.bind('<Shift-Alt-Left>',  lambda e: model.moveFieldLeft()  if not self.isEndActive else model.moveFieldToLeft())

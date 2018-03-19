@@ -890,7 +890,11 @@ class Model(object):
         self._notificationsDisabled = False
 
     def disableNotifications(self):
+        if self._notificationsDisabled:
+            return False
+        
         self._notificationsDisabled = True
+        return True
 
     def notificationsAreDisabled(self):
         return self._notificationsDisabled
@@ -1171,7 +1175,7 @@ class Model(object):
         self._swapField(self.getFieldBelowOf, self.getCursorsForSwapDown())
     
     def _swapField(self, getNextField, cursors):
-        self.disableNotifications()
+        notifications = self.disableNotifications()
 
         cursors = tuple(cursors)
         self.moveCursor(getNextField)
@@ -1183,8 +1187,9 @@ class Model(object):
             self.setField(*c, value=tmp)
             self.setField(*n, value=toBeMoved)
 
-        self.enableNotifications()
-        self.onChange(self.CHANGE_BOARD)
+        if notifications:
+            self.enableNotifications()
+            self.onChange(self.CHANGE_BOARD)
 
 
     def getCursorsForSwapLeft(self):
@@ -1244,6 +1249,46 @@ class Model(object):
             for c0 in line:
                 yield xy(c0,c1)
 
+
+    # swap fields to border (End + Alt + Arrow)
+
+    def swapFieldToLeft(self):
+        self.disableNotifications()
+        
+        for x in range(self.getCursorDistanceToLeft()):
+            self.swapFieldLeft()
+        
+        self.enableNotifications()
+        self.onChange(self.CHANGE_BOARD)
+
+    def swapFieldToRight(self):
+        self.disableNotifications()
+        
+        for x in range(self.getCursorDistanceToRight()):
+            self.swapFieldRight()
+        
+        self.enableNotifications()
+        self.onChange(self.CHANGE_BOARD)
+
+    def swapFieldToTop(self):
+        self.disableNotifications()
+        
+        for x in range(self.getCursorDistanceToTop()):
+            self.swapFieldUp()
+        
+        self.enableNotifications()
+        self.onChange(self.CHANGE_BOARD)
+
+    def swapFieldToBottom(self):
+        self.disableNotifications()
+        
+        for x in range(self.getCursorDistanceToBottom()):
+            self.swapFieldDown()
+        
+        self.enableNotifications()
+        self.onChange(self.CHANGE_BOARD)
+        
+        
 
     # move fields (Shift + Alt + Arrow)
 
