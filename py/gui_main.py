@@ -74,6 +74,24 @@ class KEY:
     COLOR_TEXT_COR_INVALID_UNSELECTED = 'color-text-solution-coordinate-invalid'
     COLOR_TEXT_COR_INVALID_SELECTED   = 'color-text-solution-coordinate-invalid-selected'
 
+    CURSOR_BORDER_WIDTH = 'cursor-normal-border-width'
+    CURSOR_BORDER_COLOR = 'cursor-normal-border-color'
+    CURSOR_FILL_COLOR   = 'cursor-normal-fill-color'
+    CURSOR_FILL_STIPPLE = 'cursor-normal-fill-stipple'
+
+    CURSOR_LAST_BORDER_WIDTH = 'cursor-last-border-width'
+    CURSOR_LAST_BORDER_COLOR = 'cursor-last-border-color'
+    CURSOR_LAST_FILL_COLOR   = 'cursor-last-fill-color'
+    CURSOR_LAST_FILL_STIPPLE = 'cursor-last-fill-stipple'
+
+    CURSOR_VIRTUAL_BORDER_WIDTH = 'cursor-virtual-border-width'
+    CURSOR_VIRTUAL_BORDER_COLOR = 'cursor-virtual-border-color'
+    CURSOR_VIRTUAL_FILL_COLOR   = 'cursor-virtual-fill-color'
+    CURSOR_VIRTUAL_FILL_STIPPLE = 'cursor-virtual-fill-stipple'
+
+    CURSOR_TEXT_BG_COLOR   = 'cursor-text-background-color'
+    CURSOR_TEXT_BG_STIPPLE = 'cursor-text-background-stipple'
+
     WIDTH_NOTES = 'width-notes'
     WIDTH_LABEL_INFO = 'width-selection-info'
 
@@ -271,6 +289,24 @@ class MainWindow(tk.Tk):
         settings.setdefault(KEY.COLOR_TEXT_COR_INVALID_UNSELECTED, 'orange')
         settings.setdefault(KEY.COLOR_TEXT_COR_INVALID_SELECTED,   'red')
 
+        settings.setdefault(KEY.CURSOR_BORDER_WIDTH, gui_board.Board.cursorWidth)
+        settings.setdefault(KEY.CURSOR_BORDER_COLOR, gui_board.Board.cursorColor)
+        settings.setdefault(KEY.CURSOR_FILL_COLOR  , gui_board.Board.cursorFill)
+        settings.setdefault(KEY.CURSOR_FILL_STIPPLE, gui_board.Board.cursorStipple)
+
+        settings.setdefault(KEY.CURSOR_LAST_BORDER_WIDTH, gui_board.Board.lastCursorWidth)
+        settings.setdefault(KEY.CURSOR_LAST_BORDER_COLOR, gui_board.Board.lastCursorColor)
+        settings.setdefault(KEY.CURSOR_LAST_FILL_COLOR  , gui_board.Board.lastCursorFill)
+        settings.setdefault(KEY.CURSOR_LAST_FILL_STIPPLE, gui_board.Board.lastCursorStipple)
+
+        settings.setdefault(KEY.CURSOR_VIRTUAL_BORDER_WIDTH, gui_board.Board.virtualCursorWidth)
+        settings.setdefault(KEY.CURSOR_VIRTUAL_BORDER_COLOR, gui_board.Board.virtualCursorColor)
+        settings.setdefault(KEY.CURSOR_VIRTUAL_FILL_COLOR  , gui_board.Board.virtualCursorFill)
+        settings.setdefault(KEY.CURSOR_VIRTUAL_FILL_STIPPLE, gui_board.Board.virtualCursorStipple)
+
+        settings.setdefault(KEY.CURSOR_TEXT_BG_COLOR  , gui_board.Board.textFill)
+        settings.setdefault(KEY.CURSOR_TEXT_BG_STIPPLE, gui_board.Board.textStipple)
+
         settings.setdefault(KEY.VIEW_MOVABILITY_INDICATORS, False)
         settings.setdefault(KEY.AUTO_TRIGGER_SANITY_CHECK, True)
         settings.setdefault(KEY.WIDTH_NOTES, 40)
@@ -370,6 +406,8 @@ class MainWindow(tk.Tk):
             noteStyler.map('TNotebook.Tab', background=bgs, foreground=fgs)
 
 
+        # commandline & notes
+
         if bgEntry != None:
             self.textNotes.config(bg = bgEntry)
             self.board.setCommandlineBackgroundColor(bgEntry)
@@ -382,6 +420,8 @@ class MainWindow(tk.Tk):
         if textError != None:
             self.board.setCommandlineTextColorError(textError)
 
+
+        # solution settings
 
         if textCorSelected == None:
             textCorSelected = text
@@ -401,6 +441,55 @@ class MainWindow(tk.Tk):
             gui_solution_view.SolutionViewRaw.COLOR_SELECTION_FILL = bgSolutionSelection
         if borderSolutionSelection != None:
             gui_solution_view.SolutionViewRaw.COLOR_SELECTION_OUTLINE = borderSolutionSelection
+
+
+        # cursor settings
+
+        v = settings[KEY.CURSOR_BORDER_WIDTH]
+        if v != None:
+            gui_board.Board.cursorWidth = v
+        v = settings[KEY.CURSOR_BORDER_COLOR]
+        if v != None:
+            gui_board.Board.cursorColor = v
+        v = settings[KEY.CURSOR_FILL_COLOR]
+        if v != None:
+            gui_board.Board.cursorFill = v
+        v = settings[KEY.CURSOR_FILL_STIPPLE]
+        if v != None:
+            gui_board.Board.cursorStipple = v
+        
+        v = settings[KEY.CURSOR_LAST_BORDER_WIDTH]
+        if v != None:
+            gui_board.Board.lastCursorWidth = v
+        v = settings[KEY.CURSOR_LAST_BORDER_COLOR]
+        if v != None:
+            gui_board.Board.lastCursorColor = v
+        v = settings[KEY.CURSOR_LAST_FILL_COLOR]
+        if v != None:
+            gui_board.Board.lastCursorFill = v
+        v = settings[KEY.CURSOR_LAST_FILL_STIPPLE]
+        if v != None:
+            gui_board.Board.lastCursorStipple = v
+        
+        v = settings[KEY.CURSOR_VIRTUAL_BORDER_WIDTH]
+        if v != None:
+            gui_board.Board.virtualCursorWidth = v
+        v = settings[KEY.CURSOR_VIRTUAL_BORDER_COLOR]
+        if v != None:
+            gui_board.Board.virtualCursorColor = v
+        v = settings[KEY.CURSOR_VIRTUAL_FILL_COLOR]
+        if v != None:
+            gui_board.Board.virtualCursorFill = v
+        v = settings[KEY.CURSOR_VIRTUAL_FILL_STIPPLE]
+        if v != None:
+            gui_board.Board.virtualCursorStipple = v
+
+        v = settings[KEY.CURSOR_TEXT_BG_COLOR]
+        if v != None:
+            gui_board.Board.textFill = v
+        v = settings[KEY.CURSOR_TEXT_BG_STIPPLE]
+        if v != None:
+            gui_board.Board.textStipple = v
 
 
 
