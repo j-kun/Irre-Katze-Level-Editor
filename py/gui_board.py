@@ -26,6 +26,7 @@ class Board(tk.Canvas):
     TAG_BORDER = 'border'
     TAG_BOARD  = 'board'
 
+    # cursor settings
     cursorWidth = 2
     cursorColor = 'blue'
     cursorFill  = cursorColor
@@ -41,8 +42,15 @@ class Board(tk.Canvas):
     virtualCursorFill  = virtualCursorColor
     virtualCursorStipple = tkc.STIPPLE_GRAY_12
 
+    # text settings
     textStipple = tkc.STIPPLE_GRAY_25
     textFill    = 'white'
+    textColor   = 'black'
+    
+    # do text settings apply to cursors if cursor indices are displayed?
+    isTextStippleDominant = True
+    isTextFillDominant    = True
+    isTextColorDominant   = True
 
     DEBUG_CURSOR_OFF  = 0
     DEBUG_CURSOR_REAL = 1
@@ -506,7 +514,7 @@ class Board(tk.Canvas):
                 if not isModeSolution and self.viewObjectCode != self.OBJECT_CODE_OFF:
                     text = imageOpener.getImage.getShortName(fld),
                     self.drawRectangle(x, y, fill=self.textFill, stipple=self.textStipple, width=0)
-                    self.drawText(x, y, text=text, font="-weight bold", tags=(self.TAG_BOARD,))
+                    self.drawText(x, y, text=text, font="-weight bold", fill=self.textColor, tags=(self.TAG_BOARD,))
 
         if isModeSolution:
             x, y = visitedFields[-1]
@@ -530,23 +538,23 @@ class Board(tk.Canvas):
             lastCursorFill    = self.lastCursorFill
             lastCursorStipple = self.lastCursorStipple
         elif self.debugCursor == self.DEBUG_CURSOR_REAL:
-            fill       = self.textFill
-            debugColor = self.cursorColor
-            stipple    = self.textStipple
-            virtualCursorFill       = self.textFill
-            virtualCursorDebugColor = self.virtualCursorColor
-            virtualCursorStipple    = self.textStipple
-            lastCursorFill       = self.textFill
-            lastCursorDebugColor = self.lastCursorColor
-            lastCursorStipple    = self.textStipple
+            fill       = self.textFill if self.isTextFillDominant else self.cursorFill
+            debugColor = self.textColor if self.isTextColorDominant else self.cursorColor
+            stipple    = self.textStipple if self.isTextStippleDominant else self.cursorStipple
+            virtualCursorFill       = self.textFill if self.isTextFillDominant else self.virtualCursorFill
+            virtualCursorDebugColor = self.textColor if self.isTextColorDominant else self.virtualCursorColor
+            virtualCursorStipple    = self.textStipple if self.isTextStippleDominant else self.virtualCursorStipple
+            lastCursorFill       = self.textFill if self.isTextFillDominant else self.lastCursorFill
+            lastCursorDebugColor = self.textColor if self.isTextColorDominant else self.lastCursorColor
+            lastCursorStipple    = self.textStipple if self.isTextStippleDominant else self.lastCursorStipple
             indices = tuple(range(len(self.model.getCursors())))
         else:
             fill       = 'yellow'
             debugColor = 'red'
             stipple    = tkc.STIPPLE_GRAY_50
-            virtualCursorFill       = self.textFill
-            virtualCursorDebugColor = self.virtualCursorColor
-            virtualCursorStipple    = self.textStipple
+            virtualCursorFill       = self.textFill if self.isTextFillDominant else self.virtualCursorFill
+            virtualCursorDebugColor = self.textColor if self.isTextColorDominant else self.virtualCursorColor
+            virtualCursorStipple    = self.textStipple if self.isTextStippleDominant else self.lastCursorStipple
             lastCursorFill       = fill
             lastCursorDebugColor = debugColor
             lastCursorStipple    = stipple
