@@ -108,6 +108,10 @@ class KEY:
     SELECTION_INFO_TOOLTIP_PROP_SEP     = 'statusbar-selection-info-tooltip-property-separator'
     SELECTION_INFO_TOOLTIP_ALWAYS  = 'statusbar-selection-info-tooltip-always'
 
+    OBJECT_DESCRIPTION_FORMAT          = 'object-description-format'
+    OBJECT_DESCRIPTION_PROPERTY_SEP    = 'object-description-property-separator'
+    OBJECT_DESCRIPTION_PROPERTY_FORMAT = 'object-description-property-format'
+
 
 
 class MainWindow(tk.Tk):
@@ -338,7 +342,20 @@ class MainWindow(tk.Tk):
         settings.setdefault(KEY.SELECTION_INFO_TOOLTIP_PROP_SEP,        u"")
         settings.setdefault(KEY.SELECTION_INFO_TOOLTIP_ALWAYS,   False)
         
+        settings.setdefault(KEY.OBJECT_DESCRIPTION_FORMAT,          objects.OBJECT_DESCRIPTION_FORMAT)
+        settings.setdefault(KEY.OBJECT_DESCRIPTION_PROPERTY_SEP,    objects.OBJECT_DESCRIPTION_PROPERTY_SEP)
+        settings.setdefault(KEY.OBJECT_DESCRIPTION_PROPERTY_FORMAT, objects.OBJECT_DESCRIPTION_PROPERTY_FORMAT)
+        
+        
         settings.setdefault(settings_manager.KEY.UPDATE_SETTINGS, True)
+        
+        
+        # this would actually belong in applySettings but there it would be executed too late
+        
+        objects.OBJECT_DESCRIPTION_FORMAT          = settings[KEY.OBJECT_DESCRIPTION_FORMAT]
+        objects.OBJECT_DESCRIPTION_PROPERTY_SEP    = settings[KEY.OBJECT_DESCRIPTION_PROPERTY_SEP]
+        objects.OBJECT_DESCRIPTION_PROPERTY_FORMAT = settings[KEY.OBJECT_DESCRIPTION_PROPERTY_FORMAT]
+        
 
     def applySettings(self):
         bg         = settings[KEY.COLOR_BG]
