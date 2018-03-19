@@ -31,6 +31,11 @@ class Board(tk.Canvas):
     cursorFill  = cursorColor
     cursorStipple = tkc.STIPPLE_GRAY_25
 
+    lastCursorWidth = cursorWidth
+    lastCursorColor = 'purple'
+    lastCursorFill  = cursorFill
+    lastCursorStipple = cursorStipple
+
     virtualCursorWidth = 2
     virtualCursorColor = 'green'
     virtualCursorFill  = virtualCursorColor
@@ -522,6 +527,8 @@ class Board(tk.Canvas):
             stipple = self.cursorStipple
             virtualCursorFill    = self.virtualCursorFill
             virtualCursorStipple = self.virtualCursorStipple
+            lastCursorFill    = self.lastCursorFill
+            lastCursorStipple = self.lastCursorStipple
         elif self.debugCursor == self.DEBUG_CURSOR_REAL:
             fill       = self.textFill
             debugColor = self.cursorColor
@@ -529,6 +536,9 @@ class Board(tk.Canvas):
             virtualCursorFill       = self.textFill
             virtualCursorDebugColor = self.virtualCursorColor
             virtualCursorStipple    = self.textStipple
+            lastCursorFill       = self.textFill
+            lastCursorDebugColor = self.lastCursorColor
+            lastCursorStipple    = self.textStipple
             indices = tuple(range(len(self.model.getCursors())))
         else:
             fill       = 'yellow'
@@ -537,6 +547,9 @@ class Board(tk.Canvas):
             virtualCursorFill       = self.textFill
             virtualCursorDebugColor = self.virtualCursorColor
             virtualCursorStipple    = self.textStipple
+            lastCursorFill       = fill
+            lastCursorDebugColor = debugColor
+            lastCursorStipple    = stipple
             if   self.debugCursor == self.DEBUG_CURSOR_LEFT_TO_RIGHT:
                 indices = tuple(self.model.cursors.index(c) for c in self.model.getCursorsForSwapRight())
                 debugDirection = u"→"
@@ -551,8 +564,17 @@ class Board(tk.Canvas):
                 debugDirection = u"↑"
             else:
                 assert False
+
         i = 0
-        for x,y in self.model.getCursors():
+        cursors = iter(self.model.getCursors())
+        try:
+            lastCursor = cursors.next()
+        except StopIteration:
+            lastCursor = None
+
+        # draw normal cursors
+        for c in cursors:
+            x,y = lastCursor
             self.drawRectangle(x, y,
                 width   = self.cursorWidth,
                 outline = self.cursorColor,
@@ -568,7 +590,28 @@ class Board(tk.Canvas):
                     tags = (self.TAG_CURSOR),
                 )
                 i += 1
+            lastCursor = c
 
+        # draw last cursor
+        if lastCursor != None:
+            x,y = lastCursor
+            self.drawRectangle(x, y,
+                width   = self.lastCursorWidth,
+                outline = self.lastCursorColor,
+                stipple = lastCursorStipple,
+                fill    = lastCursorFill,
+                tags = (self.TAG_CURSOR),
+            )
+            if self.debugCursor:
+                self.drawText(x, y,
+                    text = str(indices.index(i)) if i in indices else "",
+                    font = "-weight bold",
+                    fill = lastCursorDebugColor,
+                    tags = (self.TAG_CURSOR),
+                )
+                i += 1
+
+        # draw virtual cursor
         if self.model.hasVirtualCursor():
             x,y = self.model.getVirtualCursor()
 
