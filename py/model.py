@@ -1303,6 +1303,44 @@ class Model(object):
         return len(self._tmpCursors) != len(self.cursors) \
             or not all(c0 == c1 for c0, c1 in zip(self._tmpCursors, self.cursors))
 
+    
+    # move fields to border (End + Shift + Alt + Arrow)
+    
+    def moveFieldToLeft(self):
+        self.disableNotifications()
+        
+        for x in range(self.getCursorDistanceToLeft()):
+            self.moveFieldLeft()
+        
+        self.enableNotifications()
+        self.onChange(self.CHANGE_BOARD, clearTmpBoard=False)
+
+    def moveFieldToRight(self):
+        self.disableNotifications()
+        
+        for x in range(self.getCursorDistanceToRight()):
+            self.moveFieldRight()
+        
+        self.enableNotifications()
+        self.onChange(self.CHANGE_BOARD, clearTmpBoard=False)
+
+    def moveFieldToTop(self):
+        self.disableNotifications()
+        
+        for x in range(self.getCursorDistanceToTop()):
+            self.moveFieldUp()
+        
+        self.enableNotifications()
+        self.onChange(self.CHANGE_BOARD, clearTmpBoard=False)
+
+    def moveFieldToBottom(self):
+        self.disableNotifications()
+        
+        for x in range(self.getCursorDistanceToBottom()):
+            self.moveFieldDown()
+        
+        self.enableNotifications()
+        self.onChange(self.CHANGE_BOARD, clearTmpBoard=False)
 
 
     # ---------- background ----------
@@ -1376,6 +1414,19 @@ class Model(object):
 
     def hasCursor(self):
         return len(self.cursors) > 0
+    
+    
+    def getCursorDistanceToLeft(self):
+        return min(self.cursors, key=lambda p: p[0])[0]
+    
+    def getCursorDistanceToRight(self):
+        return self.COLS - 1 - max(self.cursors, key=lambda p: p[0])[0]
+    
+    def getCursorDistanceToTop(self):
+        return min(self.cursors, key=lambda p: p[1])[1]
+    
+    def getCursorDistanceToBottom(self):
+        return self.ROWS - 1 - max(self.cursors, key=lambda p: p[1])[1]
     
 
     # explicit coordinates (Mouse Click)
@@ -1552,25 +1603,25 @@ class Model(object):
     def moveCursorToLeft(self):
         if not self.hasCursor():
             self.cursors.append(self.CURSOR_START_FOR_LEFT)
-        dx = - min(self.cursors, key=lambda p: p[0])[0]
+        dx = - self.getCursorDistanceToLeft()
         self._moveCursors(dx, 0)
 
     def moveCursorToRight(self):
         if not self.hasCursor():
             self.cursors.append(self.CURSOR_START_FOR_RIGHT)
-        dx = self.COLS - 1 - max(self.cursors, key=lambda p: p[0])[0]
+        dx = self.getCursorDistanceToRight()
         self._moveCursors(dx, 0)
     
     def moveCursorToTop(self):
         if not self.hasCursor():
             self.cursors.append(self.CURSOR_START_FOR_UP)
-        dy = - min(self.cursors, key=lambda p: p[1])[1]
+        dy = - self.getCursorDistanceToTop()
         self._moveCursors(0, dy)
 
     def moveCursorToBottom(self):
         if not self.hasCursor():
             self.cursors.append(self.CURSOR_START_FOR_DOWN)
-        dy = self.ROWS - 1 - max(self.cursors, key=lambda p: p[1])[1]
+        dy = self.getCursorDistanceToBottom()
         self._moveCursors(0, dy)
 
     def _moveCursors(self, dx, dy):
