@@ -28,14 +28,14 @@ class Board(tk.Canvas):
 
     # cursor settings
     cursorWidth = 2
-    cursorColor = 'blue'
-    cursorFill  = cursorColor
+    cursorColor = 'royal blue'
+    cursorFill  = 'blue'
     cursorStipple = tkc.STIPPLE_GRAY_25
 
     lastCursorWidth = cursorWidth
-    lastCursorColor = 'purple'
-    lastCursorFill  = cursorFill
-    lastCursorStipple = cursorStipple
+    lastCursorColor = 'blue'
+    lastCursorFill  = lastCursorColor
+    lastCursorStipple = tkc.STIPPLE_GRAY_50
 
     virtualCursorWidth = 2
     virtualCursorColor = 'green'
