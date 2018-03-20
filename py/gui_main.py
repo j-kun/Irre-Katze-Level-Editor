@@ -49,7 +49,7 @@ class KEY:
     DEFAULT_FILENAME_EXPORT  = 'path-export-filename'
 
     VIEW_MOVABILITY_INDICATORS  = 'view-movability-indicators'
-    AUTO_TRIGGER_SANITY_CHECK   = 'auto-trigger-sanity-check'
+    AUTO_TRIGGER_SANITY_CHECK   = 'check-on-change-if-log-is-opened'
 
     ASK_BEFORE_SAVE       = 'check-and-ask-if-wrong-before-save'
     ASK_BEFORE_SAVE_AS    = 'check-and-ask-if-wrong-before-save-as'
