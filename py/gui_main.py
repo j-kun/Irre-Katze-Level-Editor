@@ -41,12 +41,12 @@ class KEY:
     CMD_OPEN_SETTINGS_LINUX   = 'command-open-settings-linux'
     CMD_OPEN_SETTINGS_MAC     = 'command-open-settings-mac'
     
-    DEFAULT_DIRECTORY_OPEN = 'open-default-directory'
-    DEFAULT_FILENAME_OPEN  = 'open-default-filename'
-    DEFAULT_DIRECTORY_SAVE = 'save-default-directory'
-    DEFAULT_FILENAME_SAVE  = 'save-default-filename'
-    DEFAULT_DIRECTORY_EXPORT = 'export-default-directory'
-    DEFAULT_FILENAME_EXPORT  = 'export-default-filename'
+    DEFAULT_DIRECTORY_OPEN   = 'path-open-directory'
+    DEFAULT_FILENAME_OPEN    = 'path-open-filename'
+    DEFAULT_DIRECTORY_SAVE   = 'path-save-directory'
+    DEFAULT_FILENAME_SAVE    = 'path-save-filename'
+    DEFAULT_DIRECTORY_EXPORT = 'path-export-directory'
+    DEFAULT_FILENAME_EXPORT  = 'path-export-filename'
 
     VIEW_MOVABILITY_INDICATORS  = 'view-movability-indicators'
     AUTO_TRIGGER_SANITY_CHECK   = 'auto-trigger-sanity-check'
