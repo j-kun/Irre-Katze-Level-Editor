@@ -100,11 +100,11 @@ class KEY:
     WIDTH_NOTES = 'width-notes'
     WIDTH_LABEL_INFO = 'width-selection-info'
     
-    SELECTION_INFO_PATTERN         = 'statusbar-selection-info-pattern'
-    SELECTION_INFO_PROP_PATTERN    = 'statusbar-selection-info-property-pattern'
+    SELECTION_INFO_FORMAT          = 'statusbar-selection-info-format'
+    SELECTION_INFO_PROP_FORMAT     = 'statusbar-selection-info-property-format'
     SELECTION_INFO_PROP_SEP        = 'statusbar-selection-info-property-separator'
-    SELECTION_INFO_TOOLTIP_PATTERN      = 'statusbar-selection-info-tooltip-pattern'
-    SELECTION_INFO_TOOLTIP_PROP_PATTERN = 'statusbar-selection-info-tooltip-property-pattern'
+    SELECTION_INFO_TOOLTIP_FORMAT       = 'statusbar-selection-info-tooltip-format'
+    SELECTION_INFO_TOOLTIP_PROP_FORMAT  = 'statusbar-selection-info-tooltip-property-format'
     SELECTION_INFO_TOOLTIP_PROP_SEP     = 'statusbar-selection-info-tooltip-property-separator'
     SELECTION_INFO_TOOLTIP_ALWAYS  = 'statusbar-selection-info-tooltip-always'
 
@@ -116,7 +116,7 @@ class KEY:
 
 class MainWindow(tk.Tk):
 
-    titlePattern = _("Irre Katze - Level Editor - {filename}{hasChanged}")
+    titleFormat = _("Irre Katze - Level Editor - {filename}{hasChanged}")
 
     PAD_X = 5
     PAD_Y = 5
@@ -218,7 +218,7 @@ class MainWindow(tk.Tk):
         self.applySettings()
 
     def updateTitle(self):
-        self.title(self.titlePattern.format(
+        self.title(self.titleFormat.format(
             filename = _("<unsaved>") if self.model.getFileName() == None else self.model.getFileName(),
             hasChanged = "*" if self.model.hasChanged() else "",
         ))
@@ -334,11 +334,11 @@ class MainWindow(tk.Tk):
         settings.setdefault(KEY.WIDTH_NOTES, 40)
         settings.setdefault(KEY.WIDTH_LABEL_INFO, 50)
         
-        settings.setdefault(KEY.SELECTION_INFO_PATTERN,         u"{cursorName} [{x},{y}]: {objCode:03d} ({objChr}): {properties}")
-        settings.setdefault(KEY.SELECTION_INFO_PROP_PATTERN,    u"{}")
+        settings.setdefault(KEY.SELECTION_INFO_FORMAT,          u"{cursorName} [{x},{y}]: {objCode:03d} ({objChr}): {properties}")
+        settings.setdefault(KEY.SELECTION_INFO_PROP_FORMAT,     u"{}")
         settings.setdefault(KEY.SELECTION_INFO_PROP_SEP,        u", ")
-        settings.setdefault(KEY.SELECTION_INFO_TOOLTIP_PATTERN,         u"{cursorName} [{x},{y}]\n{objCode:03d} ({objChr}): {properties}")
-        settings.setdefault(KEY.SELECTION_INFO_TOOLTIP_PROP_PATTERN,    u"\n - {}")
+        settings.setdefault(KEY.SELECTION_INFO_TOOLTIP_FORMAT,          u"{cursorName} [{x},{y}]\n{objCode:03d} ({objChr}): {properties}")
+        settings.setdefault(KEY.SELECTION_INFO_TOOLTIP_PROP_FORMAT,     u"\n - {}")
         settings.setdefault(KEY.SELECTION_INFO_TOOLTIP_PROP_SEP,        u"")
         settings.setdefault(KEY.SELECTION_INFO_TOOLTIP_ALWAYS,   False)
         
@@ -728,12 +728,12 @@ class MainWindow(tk.Tk):
         propertiesList = objects.getPropertiesList(obj)
         
         properties = lambda sep, p: objects.formatList(propertiesList, sep=sep, form=p)
-        msg = lambda properties: pattern.format(cursorName=cursorName, x=cor[0], y=cor[1], objCode=obj, objChr=objChr, properties=properties)
+        msg = lambda properties: propFormat.format(cursorName=cursorName, x=cor[0], y=cor[1], objCode=obj, objChr=objChr, properties=properties)
         
-        info = properties(sep=settings[KEY.SELECTION_INFO_PROP_SEP], p=settings[KEY.SELECTION_INFO_PROP_PATTERN])
-        infoTooltip = lambda: properties(sep=settings[KEY.SELECTION_INFO_TOOLTIP_PROP_SEP], p=settings[KEY.SELECTION_INFO_TOOLTIP_PROP_PATTERN])
+        info = properties(sep=settings[KEY.SELECTION_INFO_PROP_SEP], p=settings[KEY.SELECTION_INFO_PROP_FORMAT])
+        infoTooltip = lambda: properties(sep=settings[KEY.SELECTION_INFO_TOOLTIP_PROP_SEP], p=settings[KEY.SELECTION_INFO_TOOLTIP_PROP_FORMAT])
         
-        pattern = settings[KEY.SELECTION_INFO_TOOLTIP_PATTERN]
+        propFormat = settings[KEY.SELECTION_INFO_TOOLTIP_FORMAT]
         maxWidth = settings[KEY.WIDTH_LABEL_INFO]
         if len(info) > maxWidth:
             tkx.set_text(self.labelInfo.tooltip, msg(infoTooltip()))
@@ -744,7 +744,7 @@ class MainWindow(tk.Tk):
             else:
                 tkx.set_text(self.labelInfo.tooltip, None)
         
-        pattern = settings[KEY.SELECTION_INFO_PATTERN]
+        propFormat = settings[KEY.SELECTION_INFO_FORMAT]
         tkx.set_text(self.labelInfo, msg(info))
         
 
