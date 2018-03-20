@@ -574,7 +574,7 @@ class Board(tk.Canvas):
         i = 0
         cursors = iter(self.model.getCursors())
         try:
-            lastCursor = cursors.next()
+            lastCursor = next(cursors)
         except StopIteration:
             lastCursor = None
 
