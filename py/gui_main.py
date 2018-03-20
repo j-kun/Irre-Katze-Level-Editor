@@ -20,6 +20,7 @@ import model
 import model_object_catalog as objects
 import model_background_catalog as backgrounds
 
+import open_directory
 import settings_manager
 settings = settings_manager.settings
 
@@ -36,6 +37,10 @@ FILETYPES = (
 
 
 class KEY:
+    CMD_OPEN_SETTINGS_WINDOWS = 'command-open-settings-windows'
+    CMD_OPEN_SETTINGS_LINUX   = 'command-open-settings-linux'
+    CMD_OPEN_SETTINGS_MAC     = 'command-open-settings-mac'
+    
     DEFAULT_DIRECTORY_OPEN = 'open-default-directory'
     DEFAULT_FILENAME_OPEN  = 'open-default-filename'
     DEFAULT_DIRECTORY_SAVE = 'save-default-directory'
@@ -270,6 +275,10 @@ class MainWindow(tk.Tk):
 
 
     def initSettings(self):
+        settings.setdefault(KEY.CMD_OPEN_SETTINGS_WINDOWS, open_directory.CMD_OPEN_FILE_WINDOWS)
+        settings.setdefault(KEY.CMD_OPEN_SETTINGS_LINUX,   open_directory.CMD_OPEN_FILE_LINUX)
+        settings.setdefault(KEY.CMD_OPEN_SETTINGS_MAC,     open_directory.CMD_OPEN_FILE_MAC)
+        
         settings.setdefault(KEY.DEFAULT_DIRECTORY_OPEN, imageOpener.toAbsPath("level-vorlagen"))
         settings.setdefault(KEY.DEFAULT_FILENAME_OPEN, None)
         settings.setdefault(KEY.DEFAULT_DIRECTORY_SAVE, os.path.expanduser("~"))
@@ -549,6 +558,14 @@ class MainWindow(tk.Tk):
         gui_board.Board.isTextColorDominant   = settings[KEY.CURSOR_IS_TEXT_FG_COLOR_DOMINANT]
         gui_board.Board.isTextFillDominant    = settings[KEY.CURSOR_IS_TEXT_BG_COLOR_DOMINANT]
         gui_board.Board.isTextStippleDominant = settings[KEY.CURSOR_IS_TEXT_BG_STIPPLE_DOMINANT]
+        
+        
+        # open settings
+        
+        open_directory.CMD_OPEN_FILE_WINDOWS = settings[KEY.CMD_OPEN_SETTINGS_WINDOWS]
+        open_directory.CMD_OPEN_FILE_LINUX   = settings[KEY.CMD_OPEN_SETTINGS_LINUX]
+        open_directory.CMD_OPEN_FILE_MAC     = settings[KEY.CMD_OPEN_SETTINGS_MAC]
+        
 
 
     def configAll(self, widget, kw):

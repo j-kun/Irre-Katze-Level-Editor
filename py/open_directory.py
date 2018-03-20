@@ -8,9 +8,29 @@ log = logging.getLogger(__name__)
 # other libraries
 import system
 
+
+# ---------- settings ----------
+
+WC_FILEPATH = '{filepath}'
+CMD_OPEN_FILE_WINDOWS = ("cmd", "/C", "start", "", WC_FILEPATH)
+CMD_OPEN_FILE_LINUX   = ("xdg-open", WC_FILEPATH)
+CMD_OPEN_FILE_MAC     = ("open", "--", WC_FILEPATH)
+
+
+# ---------- internal commands ----------
+
+def _format_open_file_cmd(cmd, filepath):
+    cmd = list(cmd)
+    for i in range(len(cmd)):
+        cmd[i] = cmd[i].replace(WC_FILEPATH, filepath)
+    return cmd
+
 def _run_cmd(cmd):
     log.debug("executing {cmd}".format(cmd=cmd))
     return subprocess.Popen(cmd)
+
+
+# ---------- interface ----------
 
 if system.isWindows():
     def open_directory(path, select):
@@ -21,8 +41,11 @@ if system.isWindows():
             cmd.append("/select,")
         cmd.append(path)
         return _run_cmd(cmd)
+    
     def open_file(path):
-        os.startfile(path)
+        cmd = _format_open_file_cmd(CMD_OPEN_FILE_WINDOWS, path)
+        return _run_cmd(cmd)
+
 elif system.isLinux():
     def open_directory(path, select):
         '''select=True: parent directory is opened, path (file or directory) is selected.
@@ -33,8 +56,11 @@ elif system.isLinux():
             dirpath = path
         cmd = ["xdg-open", dirpath]
         return _run_cmd(cmd)
+    
     def open_file(path):
-        return _run_cmd(("xdg-open", path))
+        cmd = _format_open_file_cmd(CMD_OPEN_FILE_LINUX, path)
+        return _run_cmd(cmd)
+
 elif system.isMac():
     #https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man1/open.1.html
     def open_directory(path, select):
@@ -46,12 +72,17 @@ elif system.isMac():
         cmd.append("--")
         cmd.append(path)
         return _run_cmd(cmd)
+    
     def open_file(path):
-        return _run_cmd(("open", "--", path))
+        cmd = _format_open_file_cmd(CMD_OPEN_FILE_MAC, path)
+        return _run_cmd(cmd)
         
 else:
     raise ValueError("unknown operating system: "+system.osName)
 
+
+
+# ---------- test program ----------
 
 if __name__=='__main__':
     import os
