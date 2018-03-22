@@ -105,7 +105,8 @@ class KEY:
     OVERLAY_TEXT_BG_STIPPLE = 'overlay-text-background-stipple'
 
     WIDTH_NOTES = 'width-notes'
-    WIDTH_LABEL_INFO = 'width-selection-info'
+    WIDTH_LABEL_INFO = 'width-statusbar-selection-info'
+    WIDTH_AUTHOR     = 'width-statusbar-author'
     
     SELECTION_INFO_FORMAT          = 'statusbar-selection-info-format'
     SELECTION_INFO_PROP_FORMAT     = 'statusbar-selection-info-property-format'
@@ -182,6 +183,7 @@ class MainWindow(tk.Tk):
         self.labelAuthor.pack(side=tk.LEFT, expand=True, fill=tk.X)
         #self.labelAuthor.bind('<Button-1>', self.onAuthorClick)
         self.labelAuthor.bind('<Double-Button-1>', self.onAuthorClick)
+        tkx.add_tooltip(self.labelAuthor)
 
         # info for selected fields
         self.labelInfo = tk.Label(frame, anchor=tk.E)
@@ -346,6 +348,7 @@ class MainWindow(tk.Tk):
         settings.setdefault(KEY.AUTO_TRIGGER_SANITY_CHECK, True)
         settings.setdefault(KEY.WIDTH_NOTES, 40)
         settings.setdefault(KEY.WIDTH_LABEL_INFO, 50)
+        settings.setdefault(KEY.WIDTH_AUTHOR,     13)
         
         settings.setdefault(KEY.SELECTION_INFO_FORMAT,          u"{cursorName} [{x},{y}]: {objCode:03d} ({objChr}): {properties}")
         settings.setdefault(KEY.SELECTION_INFO_PROP_FORMAT,     u"{}")
@@ -727,7 +730,14 @@ class MainWindow(tk.Tk):
             return
         
         if change in (model.CHANGE_AUTHOR, model.CHANGE_ALL):
-            tkx.set_text(self.labelAuthor, _("Author: {name}").format(name=model.getAuthor()))
+            author = model.getAuthor()
+            authorTruncated, truncated = self.truncate(author, settings[KEY.WIDTH_AUTHOR])
+            msg = lambda author: _("Author: {name}").format(name=author)
+            if truncated:
+                tkx.set_text(self.labelAuthor.tooltip, msg(author))
+            else:
+                tkx.set_text(self.labelAuthor.tooltip, None)
+            tkx.set_text(self.labelAuthor, msg(authorTruncated))
         
         self.updateTitle()
 
