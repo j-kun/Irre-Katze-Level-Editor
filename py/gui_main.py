@@ -757,22 +757,28 @@ class MainWindow(tk.Tk):
         msg = lambda properties: propFormat.format(cursorName=cursorName, x=cor[0], y=cor[1], objCode=obj, objChr=objChr, properties=properties)
         
         info = properties(sep=settings[KEY.SELECTION_INFO_PROP_SEP], p=settings[KEY.SELECTION_INFO_PROP_FORMAT])
-        infoTooltip = lambda: properties(sep=settings[KEY.SELECTION_INFO_TOOLTIP_PROP_SEP], p=settings[KEY.SELECTION_INFO_TOOLTIP_PROP_FORMAT])
         
         propFormat = settings[KEY.SELECTION_INFO_TOOLTIP_FORMAT]
         maxWidth = settings[KEY.WIDTH_LABEL_INFO]
-        if len(info) > maxWidth:
-            tkx.set_text(self.labelInfo.tooltip, msg(infoTooltip()))
-            info = info[:maxWidth-3] + "..."
+        info, truncated = self.truncate(info, maxWidth)
+        if truncated or settings[KEY.SELECTION_INFO_TOOLTIP_ALWAYS]:
+            infoTooltip = properties(sep=settings[KEY.SELECTION_INFO_TOOLTIP_PROP_SEP], p=settings[KEY.SELECTION_INFO_TOOLTIP_PROP_FORMAT])
+            tkx.set_text(self.labelInfo.tooltip, msg(infoTooltip))
         else:
-            if settings[KEY.SELECTION_INFO_TOOLTIP_ALWAYS]:
-                tkx.set_text(self.labelInfo.tooltip, msg(infoTooltip()))
-            else:
-                tkx.set_text(self.labelInfo.tooltip, None)
+            tkx.set_text(self.labelInfo.tooltip, None)
         
         propFormat = settings[KEY.SELECTION_INFO_FORMAT]
         tkx.set_text(self.labelInfo, msg(info))
+    
+    @staticmethod
+    def truncate(text, maxWidth):
+        if len(text) > maxWidth:
+            text = text[:maxWidth-3] + "..."
+            truncated = True
+        else:
+            truncated = False
         
+        return text, truncated
 
     def getSelectionInfo(self):
         obj = None
@@ -1275,6 +1281,7 @@ class MainWindow(tk.Tk):
         savedNotes = self.model.getNotes()
         currentNotes = self.getCurrentNotes()
         return savedNotes != currentNotes
+
 
 
 if __name__=='__main__':
